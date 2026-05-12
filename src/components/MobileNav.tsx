@@ -1,0 +1,34 @@
+'use client';
+import { usePathname, useRouter } from 'next/navigation';
+import { LayoutDashboard, Folder, CheckCircle2, Users, FileText, MessageSquare } from 'lucide-react';
+
+const MOBILE_ITEMS = [
+  { icon: MessageSquare, label: 'Чат', href: '/chat' },
+  { icon: Folder, label: 'Проекты', href: '/projects' },
+  { icon: CheckCircle2, label: 'Задачи', href: '/tasks' },
+  { icon: Users, label: 'Команда', href: '/team' },
+  { icon: FileText, label: 'Доки', href: '/documents' },
+];
+
+export function MobileNav() {
+  const pathname = usePathname();
+  const router = useRouter();
+
+  return (
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-proji-border flex items-center justify-around px-2 py-2 safe-area-inset-bottom">
+      {MOBILE_ITEMS.map((item) => {
+        const active = pathname === item.href || pathname.startsWith(item.href + '/');
+        return (
+          <button
+            key={item.href}
+            onClick={() => router.push(item.href)}
+            className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all ${active ? 'text-proji-primary' : 'text-slate-400'}`}
+          >
+            <item.icon size={20} />
+            <span className="text-[9px] font-bold">{item.label}</span>
+          </button>
+        );
+      })}
+    </nav>
+  );
+}
