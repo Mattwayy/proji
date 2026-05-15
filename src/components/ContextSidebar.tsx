@@ -1,5 +1,6 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
+import { useModalClose } from '../hooks/useModalClose';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Sparkles, Send, Loader2, History, Zap, ChevronRight } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
@@ -28,6 +29,8 @@ export function ContextSidebar() {
   const [input, setInput] = useState('');
   const [tab, setTab] = useState<'chat' | 'history'>('chat');
   const [thought, setThought] = useState('');
+
+  useModalClose(() => setIsAiPanelOpen(false), isAiPanelOpen);
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

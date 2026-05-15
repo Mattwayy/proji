@@ -1,8 +1,4 @@
-import fs from 'fs';
-import path from 'path';
 import { randomBytes } from 'crypto';
-
-const FILE = path.join(process.cwd(), 'data', 'credentials.json');
 
 export interface DomainCred { name: string; key: string; password: string }
 
@@ -11,8 +7,8 @@ interface UserRecord {
   passwordHash: string;
   lobbyKey: string;
   role: 'manager' | 'employer';
-  allowedDomains: string[]; // ['all'] for manager
-  domainKey?: string;       // employer's personal domain key
+  allowedDomains: string[];
+  domainKey?: string;
 }
 
 interface CredsFile {
@@ -21,17 +17,57 @@ interface CredsFile {
   domains: DomainCred[];
 }
 
-export function readCreds(): CredsFile {
-  return JSON.parse(fs.readFileSync(FILE, 'utf-8'));
+// ─── Data source ──────────────────────────────────────────────────────────────
+// In production (Vercel): reads from CREDS_JSON environment variable.
+// In local dev: reads from data/credentials.json file.
+// Writes are only possible in local dev.
+
+function readCreds(): CredsFile {
+  // Production: CREDS_JSON env var (set in Vercel dashboard)
+  if (process.env.CREDS_JSON) {
+    return JSON.parse(process.env.CREDS_JSON) as CredsFile;
+  }
+
+  // Local dev: read from file
+  if (process.env.NODE_ENV !== 'production') {
+    // Dynamic require to avoid bundling fs in edge/client
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const fs   = require('fs')   as typeof import('fs');
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const path = require('path') as typeof import('path');
+    const FILE = path.join(process.cwd(), 'data', 'credentials.json');
+    return JSON.parse(fs.readFileSync(FILE, 'utf-8')) as CredsFile;
+  }
+
+  // Production without CREDS_JSON — return safe defaults (login will fail)
+  console.error('[credentials] CREDS_JSON env var is not set. Authentication will not work.');
+  return {
+    manager:  { email: '', passwordHash: '', lobbyKey: '', role: 'manager',  allowedDomains: ['all'] },
+    employer: { email: '', passwordHash: '', lobbyKey: '', role: 'employer', allowedDomains: [] },
+    domains:  [],
+  };
 }
 
-function writeCreds(data: CredsFile) {
+function writeCreds(data: CredsFile): void {
+  if (process.env.CREDS_JSON || process.env.NODE_ENV === 'production') {
+    // On Vercel: filesystem is read-only — writes are silently ignored.
+    // To persist domain key changes, connect a database (see MIGRATION_GUIDE.md).
+    console.warn('[credentials] writeCreds: filesystem writes not available in production. Change ignored.');
+    return;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const fs   = require('fs')   as typeof import('fs');
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const path = require('path') as typeof import('path');
+  const FILE = path.join(process.cwd(), 'data', 'credentials.json');
   fs.writeFileSync(FILE, JSON.stringify(data, null, 2), 'utf-8');
 }
 
+// ─── Public API ───────────────────────────────────────────────────────────────
+
 export function findUser(email: string): UserRecord | null {
   const data = readCreds();
-  if (data.manager.email === email) return data.manager;
+  if (data.manager.email === email)  return data.manager;
   if (data.employer.email === email) return data.employer;
   return null;
 }
@@ -41,8 +77,7 @@ export function getDomainCreds(): DomainCred[] {
 }
 
 export function getDomainKey(domain: string): string | null {
-  const cred = readCreds().domains.find((d) => d.name === domain);
-  return cred?.key ?? null;
+  return readCreds().domains.find((d) => d.name === domain)?.key ?? null;
 }
 
 export function verifyDomainKey(domain: string, key: string): boolean {

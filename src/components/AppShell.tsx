@@ -1,4 +1,5 @@
 'use client';
+import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
@@ -6,12 +7,17 @@ import { MobileNav } from './MobileNav';
 import { AIBadge } from './AIBadge';
 import { ContextSidebar } from './ContextSidebar';
 import { QuickAddModal } from './QuickAddModal';
+import { TaskCreateModal } from './TaskCreateModal';
+import { useAppStore } from '../store/useAppStore';
 
 const AUTH_ROUTES = ['/login'];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAuth = AUTH_ROUTES.some((r) => pathname.startsWith(r));
+  const initProjects = useAppStore((s) => s.initProjects);
+
+  useEffect(() => { initProjects(); }, [initProjects]);
 
   if (isAuth) {
     return <>{children}</>;
@@ -30,6 +36,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <AIBadge />
       <ContextSidebar />
       <QuickAddModal />
+      <TaskCreateModal />
     </div>
   );
 }

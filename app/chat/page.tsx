@@ -30,6 +30,16 @@ export default function ChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [allMessages, currentThought]);
 
+  // Load prompt injected from Prompts Library
+  useEffect(() => {
+    const pending = localStorage.getItem('proji_pending_prompt');
+    if (pending) {
+      setInputText(pending);
+      localStorage.removeItem('proji_pending_prompt');
+      textareaRef.current?.focus();
+    }
+  }, [setInputText]);
+
   const sendMessage = useCallback(async (text?: string) => {
     const messageText = (text ?? inputText).trim();
     if (!messageText || isProcessing) return;

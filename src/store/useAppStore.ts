@@ -36,6 +36,8 @@ interface AppStore {
   setShowShareModal: (v: boolean) => void;
   showQuickAddModal: boolean;
   setShowQuickAddModal: (v: boolean) => void;
+  showTaskCreateModal: boolean;
+  setShowTaskCreateModal: (v: boolean) => void;
   quickAddType: string;
   setQuickAddType: (t: string) => void;
   quickAddCustomType: string;
@@ -78,6 +80,7 @@ interface AppStore {
   // Projects
   projects: Project[];
   setProjects: (p: Project[] | ((p: Project[]) => Project[])) => void;
+  initProjects: () => void;
   selectedProject: Project | null;
   setSelectedProject: (p: Project | null) => void;
   isProjectModalOpen: boolean;
@@ -153,6 +156,8 @@ export const useAppStore = create<AppStore>((set) => ({
   setShowShareModal: (v) => set({ showShareModal: v }),
   showQuickAddModal: false,
   setShowQuickAddModal: (v) => set({ showQuickAddModal: v }),
+  showTaskCreateModal: false,
+  setShowTaskCreateModal: (v) => set({ showTaskCreateModal: v }),
   quickAddType: 'заметка',
   setQuickAddType: (t) => set({ quickAddType: t }),
   quickAddCustomType: '',
@@ -200,7 +205,18 @@ export const useAppStore = create<AppStore>((set) => ({
 
   // Projects
   projects: [],
-  setProjects: (p) => set((s) => ({ projects: typeof p === 'function' ? p(s.projects) : p })),
+  setProjects: (p) => set((s) => {
+    const next = typeof p === 'function' ? p(s.projects) : p;
+    if (typeof window !== 'undefined') localStorage.setItem('proji_projects', JSON.stringify(next));
+    return { projects: next };
+  }),
+  initProjects: () => {
+    if (typeof window === 'undefined') return;
+    try {
+      const saved = localStorage.getItem('proji_projects');
+      if (saved) set({ projects: JSON.parse(saved) });
+    } catch {}
+  },
   selectedProject: null,
   setSelectedProject: (p) => set({ selectedProject: p }),
   isProjectModalOpen: false,

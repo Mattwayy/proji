@@ -127,7 +127,7 @@ export default function ProjectsPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
               className="bg-white rounded-3xl border border-proji-border p-6 hover:shadow-md transition-all cursor-pointer group"
-              onClick={() => { setSelectedProject(project); router.push('/projects/manage'); }}
+              onClick={() => router.push(`/projects/${project.id}`)}
             >
               <div className="flex items-start gap-3 mb-4">
                 <div className="p-2.5 rounded-2xl bg-proji-primary/10 shrink-0">

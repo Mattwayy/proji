@@ -1,5 +1,6 @@
 'use client';
 import { useState, useRef } from 'react';
+import { useModalClose } from '../hooks/useModalClose';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, KeyRound, ArrowRight, Loader2, Lock, ShieldCheck } from 'lucide-react';
 
@@ -129,6 +130,8 @@ export function DomainAccessModal({ domain, isManager, isAllowed, onConfirm, onC
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useModalClose(onClose);
 
   const data = DOMAIN_DATA[domain];
   if (!data) return null;

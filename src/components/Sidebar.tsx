@@ -8,17 +8,22 @@ import {
   RefreshCw, ClipboardCheck, Smile, Workflow, Search, MessageSquare,
   CheckCircle2, Archive, BookOpen, User, RotateCcw, Activity,
   Scale, Sparkles, ChevronDown, ChevronRight, ChevronLeft,
-  Settings, Moon, Sun, Monitor, KeyRound, LogOut,
+  Settings, Moon, Sun, Monitor, KeyRound, LogOut, Bot, CreditCard, Wallet, Plus,
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
+import { Tooltip } from './Tooltip';
 import { useAppStore } from '../store/useAppStore';
 import type { BusinessDomain, Theme } from '../types';
 
 const ROUTE_MAP: Record<string, string> = {
   'Чат': '/chat',
   'Все сценарии': '/scenarios',
+  'Prompts Library': '/scenarios',
   'Agile': '/agile',
   'Sprint Review': '/agile/sprint',
+  'Агенты': '/agents',
+  'Тарифы': '/tariffs',
+  'Оплата': '/payment',
   'Сообщения': '/messages',
   'Обсуждения': '/discussions',
   'Проекты': '/projects',
@@ -27,6 +32,7 @@ const ROUTE_MAP: Record<string, string> = {
   'Задачи проекта': '/projects/tasks',
   'Доска задач': '/board',
   'Задачи': '/tasks',
+  'Отчеты': '/reports',
   'Команда': '/team',
   'Карта стейкхолдеров': '/stakeholders',
   'Профиль сотрудника': '/team/profile',
@@ -49,15 +55,76 @@ const ROUTE_MAP: Record<string, string> = {
   'Юридический Дашборд': '/legal/dashboard',
   'Управленческий Журнал': '/management/journal',
   'Управленческий Отчет': '/management/report',
+  'Заметки': '/notes',
 };
 
-type NavDetail = { label: string; icon: React.ComponentType<any> };
+const ITEM_TIPS: Record<string, string> = {
+  'AI Tools':     'Чат, агенты и промты',
+  'Сообщения':    'Переписка и уведомления',
+  'Проекты':      'Проекты и дерево целей',
+  'Задачи':       'Канбан и список задач',
+  'Команда':      'Участники и роли',
+  'Документы':    'Файлы и регламенты',
+  'Отчеты':       'Аналитика и отчёты',
+  'Заметки':      'Личные заметки',
+  'Юридический':  'Юридический дашборд',
+  'Стратегия':    'OKR и боли',
+  'TQM':          'Управление качеством',
+  'Завод':        'Проверки и схемы ТП',
+  'Оборудование': 'Журнал ремонтов',
+  'Дневник':      'Журнал и отчёты',
+  'Страницы':     'База знаний',
+};
+
+const DETAIL_TIPS: Record<string, string> = {
+  'Чат':                        'Диалог с AI в реальном времени',
+  'Агенты':                     'Специализированные AI-агенты',
+  'Prompts Library':            'Готовые промты по сферам',
+  'Тарифы':                     'Планы и разблокировка агентов',
+  'Оплата':                     'Управление подпиской',
+  'Все сценарии':               'Все AI-сценарии',
+  'Agile':                      'Спринты и бэклог',
+  'Sprint Review':              'Ретроспектива спринта',
+  'Сообщения':                  'Личные и групповые чаты',
+  'Обсуждения':                 'Треды и дискуссии',
+  'Проекты':                    'Все проекты компании',
+  'Дерево целей':               'Цели и ключевые результаты',
+  'Создать новый':              'Запустить новый проект',
+  'Доска задач':                'Канбан-доска',
+  'Отчеты':                     'Аналитика и отчёты проекта',
+  'Команда':                    'Профили и структура',
+  'Карта стейкхолдеров':        'Заинтересованные стороны',
+  'Документы':                  'Файлы и документация',
+  'Регламенты':                 'Инструкции и стандарты',
+  'Страницы':                   'База знаний',
+  'Дерево страниц':             'Структура страниц',
+  'Заметки':                    'Личные заметки',
+  'Юридический Дашборд':        'Аналитика юротдела',
+  'Список болей':               'Боли и HADI-гипотезы',
+  'HADI Циклы':                 'Гипотезы → Данные → Инсайты',
+  'TQM Dashboard':              'Дашборд качества',
+  'TQM DWM Chart':              'День / неделя / месяц',
+  'Непрерывное улучшение':      'Kaizen-инициативы',
+  'Аудиты качества':            'Планирование аудитов',
+  'Удовлетворенность клиентов': 'NPS и фидбек',
+  'Журнал проверок':            'История проверок',
+  'Схемы ТП':                   'Технологические схемы',
+  'Журнал оборудования':        'Учёт техники',
+  'Доска оборудования':         'Статус оборудования',
+  'Архив ремонтов':             'История ремонтов',
+  'Управленческий Журнал':      'Управленческие записи',
+  'Управленческий Отчет':       'Отчёт для руководства',
+};
+
+type NavDetail = { label: string; icon: React.ComponentType<any>; isAction?: boolean };
 type NavItem = { icon: React.ComponentType<any>; label: string; href: string; details: NavDetail[] };
 
+// Always visible
 const BASE_ITEMS: NavItem[] = [
-  { icon: LayoutDashboard, label: 'Чат', href: '/chat', details: [
+  { icon: Bot, label: 'AI Tools', href: '/chat', details: [
     { label: 'Чат', icon: Sparkles },
-    { label: 'Все сценарии', icon: CheckCircle2 },
+    { label: 'Агенты', icon: Bot },
+    { label: 'Prompts Library', icon: CheckCircle2 },
     { label: 'Agile', icon: Workflow },
     { label: 'Sprint Review', icon: Search },
   ]},
@@ -66,61 +133,75 @@ const BASE_ITEMS: NavItem[] = [
     { label: 'Обсуждения', icon: MessageSquare },
   ]},
   { icon: Folder, label: 'Проекты', href: '/projects', details: [
-    { label: 'Проекты', icon: Folder },
-    { label: 'Дерево целей', icon: Target },
-  ]},
-  { icon: Target, label: 'Задачи', href: '/tasks', details: [
-    { label: 'Доска задач', icon: LayoutDashboard },
-    { label: 'Задачи', icon: CheckCircle2 },
+    { label: 'Создать новый', icon: Plus, isAction: true },
+    { label: 'Отчеты', icon: BarChart3 },
   ]},
   { icon: Users, label: 'Команда', href: '/team', details: [
     { label: 'Команда', icon: Users },
     { label: 'Карта стейкхолдеров', icon: Users },
   ]},
+  { icon: BarChart3, label: 'Отчеты', href: '/reports', details: [
+    { label: 'Отчеты', icon: BarChart3 },
+  ]},
   { icon: FileText, label: 'Документы', href: '/documents', details: [
     { label: 'Документы', icon: Archive },
     { label: 'Регламенты', icon: BookOpen },
   ]},
-  { icon: Layout, label: 'Страницы', href: '/pages-list', details: [
-    { label: 'Страницы', icon: Layout },
-    { label: 'Дерево страниц', icon: LayoutDashboard },
+  { icon: History, label: 'Заметки', href: '/notes', details: [
+    { label: 'Заметки', icon: History },
   ]},
 ];
 
-const DOMAIN_EXTRAS: Record<string, NavItem> = {
-  'Оборудование': { icon: Settings2, label: 'Оборудование', href: '/equipment/journal', details: [
-    { label: 'Журнал оборудования', icon: Settings2 },
-    { label: 'Доска оборудования', icon: LayoutDashboard },
-    { label: 'Архив ремонтов', icon: Archive },
-  ]},
-  'Производство': { icon: Factory, label: 'Завод', href: '/equipment/inspections', details: [
-    { label: 'Журнал проверок', icon: ClipboardCheck },
-    { label: 'Схемы ТП', icon: Workflow },
-    { label: 'Регламенты', icon: BookOpen },
-  ]},
+// Domain-specific extras — only shown when that domain is active
+const DOMAIN_SPECIFIC: Record<string, NavItem[]> = {
+  'Юридический': [
+    { icon: Briefcase, label: 'Юридический', href: '/legal/dashboard', details: [
+      { label: 'Юридический Дашборд', icon: Scale },
+    ]},
+  ],
+  'Стратегия': [
+    { icon: Target, label: 'Стратегия', href: '/pains', details: [
+      { label: 'Список болей', icon: Activity },
+      { label: 'Карта стейкхолдеров', icon: Users },
+      { label: 'HADI Циклы', icon: RotateCcw },
+    ]},
+    { icon: Layout, label: 'Страницы', href: '/pages-list', details: [
+      { label: 'Страницы', icon: Layout },
+      { label: 'Дерево страниц', icon: LayoutDashboard },
+    ]},
+  ],
+  'Производство': [
+    { icon: Shield, label: 'TQM', href: '/tqm', details: [
+      { label: 'TQM Dashboard', icon: Shield },
+      { label: 'TQM DWM Chart', icon: BarChart3 },
+      { label: 'Непрерывное улучшение', icon: RefreshCw },
+      { label: 'Аудиты качества', icon: ClipboardCheck },
+      { label: 'Удовлетворенность клиентов', icon: Smile },
+    ]},
+    { icon: Factory, label: 'Завод', href: '/equipment/inspections', details: [
+      { label: 'Журнал проверок', icon: ClipboardCheck },
+      { label: 'Схемы ТП', icon: Workflow },
+      { label: 'Регламенты', icon: BookOpen },
+    ]},
+  ],
+  'Оборудование': [
+    { icon: Settings2, label: 'Оборудование', href: '/equipment/journal', details: [
+      { label: 'Журнал оборудования', icon: Settings2 },
+      { label: 'Доска оборудования', icon: LayoutDashboard },
+      { label: 'Архив ремонтов', icon: Archive },
+    ]},
+    { icon: Shield, label: 'TQM', href: '/tqm', details: [
+      { label: 'TQM Dashboard', icon: Shield },
+      { label: 'Аудиты качества', icon: ClipboardCheck },
+    ]},
+  ],
+  'Управление': [
+    { icon: History, label: 'Дневник', href: '/management/journal', details: [
+      { label: 'Управленческий Журнал', icon: History },
+      { label: 'Управленческий Отчет', icon: FileText },
+    ]},
+  ],
 };
-
-const DEFAULT_EXTRA: NavItem[] = [
-  { icon: Shield, label: 'TQM', href: '/tqm', details: [
-    { label: 'TQM Dashboard', icon: Shield },
-    { label: 'TQM DWM Chart', icon: BarChart3 },
-    { label: 'Непрерывное улучшение', icon: RefreshCw },
-    { label: 'Аудиты качества', icon: ClipboardCheck },
-    { label: 'Удовлетворенность клиентов', icon: Smile },
-  ]},
-  { icon: Target, label: 'Стратегия', href: '/pains', details: [
-    { label: 'Список болей', icon: Activity },
-    { label: 'Карта стейкхолдеров', icon: Users },
-    { label: 'HADI Циклы', icon: RotateCcw },
-  ]},
-  { icon: Briefcase, label: 'Юридический', href: '/legal/dashboard', details: [
-    { label: 'Юридический Дашборд', icon: Scale },
-  ]},
-  { icon: History, label: 'Дневник', href: '/management/journal', details: [
-    { label: 'Управленческий Журнал', icon: History },
-    { label: 'Управленческий Отчет', icon: FileText },
-  ]},
-];
 
 export function Sidebar() {
   const router = useRouter();
@@ -130,14 +211,21 @@ export function Sidebar() {
   const {
     currentDomain, isSidebarExpanded, setIsSidebarExpanded,
     showAccountMenu, setShowAccountMenu, theme, setTheme,
+    setShowQuickAddModal, setQuickAddType, projects,
   } = useAppStore();
 
   // tri-state: null = auto (follow active route), string = explicitly open, 'closed' = explicitly closed
   const [panelOverride, setPanelOverride] = useState<string | null | 'closed'>(null);
 
-  const domainExtra = DOMAIN_EXTRAS[currentDomain];
-  const extras = domainExtra ? [domainExtra] : DEFAULT_EXTRA;
-  const sideItems = [...BASE_ITEMS, ...extras];
+  useEffect(() => {
+    if (!showAccountMenu) return;
+    const close = () => setShowAccountMenu(false);
+    document.addEventListener('click', close);
+    return () => document.removeEventListener('click', close);
+  }, [showAccountMenu, setShowAccountMenu]);
+
+  const domainExtras = DOMAIN_SPECIFIC[currentDomain as keyof typeof DOMAIN_SPECIFIC] ?? [];
+  const sideItems = [...BASE_ITEMS, ...domainExtras];
 
   // Derive which parent item owns the current route
   const activeParentLabel = sideItems.find(
@@ -154,14 +242,19 @@ export function Sidebar() {
     ? (panelOverride === 'closed' ? null : panelOverride ?? activeParentLabel)
     : null;
 
-  const navigate = (label: string) => {
-    const href = ROUTE_MAP[label];
+  const navigate = (d: NavDetail) => {
+    if (d.isAction) {
+      setQuickAddType('проект');
+      setShowQuickAddModal(true);
+      return;
+    }
+    const href = ROUTE_MAP[d.label];
     if (href) router.push(href);
   };
 
   const handleItemClick = (e: React.MouseEvent, item: NavItem) => {
     if (item.details.length === 1) {
-      navigate(item.details[0].label);
+      navigate(item.details[0]);
     } else if (isSidebarExpanded) {
       e.stopPropagation();
       setPanelOverride(openPanel === item.label ? 'closed' : item.label);
@@ -194,10 +287,11 @@ export function Sidebar() {
       <div className={`flex flex-col gap-0.5 overflow-y-auto overflow-x-hidden scrollbar-hide flex-1 w-full proji-scrollbar ${isSidebarExpanded ? '' : 'items-center'}`}>
         {sideItems.map((item) => (
           <div key={item.label} className="flex flex-col w-full">
+            <Tooltip text={ITEM_TIPS[item.label] ?? ''} side="right" className="w-full">
             <button
               onClick={(e) => handleItemClick(e, item)}
-              className={`transition-all duration-200 flex items-center ${
-                isSidebarExpanded ? 'w-full px-3 py-2.5 gap-3 text-sm font-semibold justify-start' : 'p-3 justify-center'
+              className={`w-full transition-all duration-200 flex items-center ${
+                isSidebarExpanded ? 'px-3 py-2.5 gap-3 text-sm font-semibold justify-start' : 'p-3 justify-center'
               } ${
                 isActive(item)
                   ? 'bg-slate-100 text-slate-900 font-bold'
@@ -210,6 +304,7 @@ export function Sidebar() {
                 <ChevronDown size={13} className={`transition-transform duration-200 ${openPanel === item.label ? 'rotate-180' : ''}`} />
               )}
             </button>
+            </Tooltip>
 
             {/* Inline dropdown (expanded) */}
             <AnimatePresence>
@@ -220,20 +315,53 @@ export function Sidebar() {
                   exit={{ height: 0, opacity: 0 }}
                   className="flex flex-col overflow-hidden"
                 >
-                  {item.details.map((d) => (
-                    <button
-                      key={d.label}
-                      onClick={() => navigate(d.label)}
-                      className={`flex items-center gap-3 text-[12px] font-medium py-2 pl-10 pr-3 transition-all text-left ${
-                        ROUTE_MAP[d.label] === pathname
-                          ? 'bg-slate-200 text-slate-900 font-semibold'
-                          : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'
-                      }`}
-                    >
-                      <d.icon size={12} className="shrink-0" />
-                      {d.label}
-                    </button>
-                  ))}
+                  {item.label === 'Проекты' ? (
+                    <>
+                      {/* Dynamic project list */}
+                      {projects.map((p) => (
+                        <Tooltip key={p.id} text={p.description || p.name} side="right">
+                          <button
+                            onClick={() => router.push(`/projects/${p.id}`)}
+                            className={`w-full flex items-center gap-3 text-[12px] font-medium py-2 pl-10 pr-3 transition-all text-left ${
+                              pathname === `/projects/${p.id}` ? 'bg-slate-200 text-slate-900 font-semibold' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'
+                            }`}
+                          >
+                            <Folder size={12} className="shrink-0" />
+                            <span className="truncate">{p.name}</span>
+                          </button>
+                        </Tooltip>
+                      ))}
+
+                      {/* Создать новый — last */}
+                      <Tooltip text="Запустить новый проект" side="right">
+                        <button
+                          onClick={() => { setQuickAddType('проект'); setShowQuickAddModal(true); }}
+                          className="w-full flex items-center gap-3 text-[12px] font-medium py-2 pl-10 pr-3 transition-all text-left text-proji-primary hover:bg-proji-primary/10 font-semibold"
+                        >
+                          <Plus size={12} className="shrink-0" />
+                          Создать новый
+                        </button>
+                      </Tooltip>
+                    </>
+                  ) : (
+                    item.details.map((d) => (
+                      <Tooltip key={d.label} text={DETAIL_TIPS[d.label] ?? ''} side="right">
+                      <button
+                        onClick={() => navigate(d)}
+                        className={`w-full flex items-center gap-3 text-[12px] font-medium py-2 pl-10 pr-3 transition-all text-left ${
+                          d.isAction
+                            ? 'text-proji-primary hover:bg-proji-primary/10 font-semibold'
+                            : ROUTE_MAP[d.label] === pathname
+                              ? 'bg-slate-200 text-slate-900 font-semibold'
+                              : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'
+                        }`}
+                      >
+                        <d.icon size={12} className="shrink-0" />
+                        {d.label}
+                      </button>
+                      </Tooltip>
+                    ))
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -281,6 +409,18 @@ export function Sidebar() {
                   </button>
                   <button className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-proji-secondary hover:bg-proji-sidebar hover:text-proji-dark transition-colors">
                     <Settings size={14} /> Настройки
+                  </button>
+                  <button
+                    onClick={() => { router.push('/tariffs'); setShowAccountMenu(false); }}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-proji-secondary hover:bg-proji-sidebar hover:text-proji-dark transition-colors"
+                  >
+                    <CreditCard size={14} /> Тарифы
+                  </button>
+                  <button
+                    onClick={() => { router.push('/payment'); setShowAccountMenu(false); }}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-proji-secondary hover:bg-proji-sidebar hover:text-proji-dark transition-colors"
+                  >
+                    <Wallet size={14} /> Оплата
                   </button>
                   <button
                     onClick={() => signOut({ callbackUrl: '/login' })}

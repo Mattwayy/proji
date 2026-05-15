@@ -1,5 +1,7 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
+import { useModalClose } from '../hooks/useModalClose';
+import { Tooltip } from './Tooltip';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Search, X, History, Plus, LayoutGrid, ChevronRight,
@@ -28,6 +30,8 @@ export function CommandPalette() {
   const [query, setQuery] = useState('');
   const [recent, setRecent] = useState<RecentPage[]>([]);
   const [noteMode, setNoteMode] = useState(false);
+
+  useModalClose(() => { setOpen(false); setNoteMode(false); }, open);
   const [noteText, setNoteText] = useState('');
   const [noteSaved, setNoteSaved] = useState(false);
 
@@ -116,6 +120,7 @@ export function CommandPalette() {
   return (
     <>
       {/* Trigger button in topbar */}
+      <Tooltip text="Быстрый поиск, переходы и действия (⌘K)" side="bottom">
       <button
         onClick={() => setOpen(true)}
         className="flex items-center gap-2 h-8 px-3 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-400 hover:border-proji-primary/60 hover:text-slate-600 transition-all w-44"
@@ -124,6 +129,7 @@ export function CommandPalette() {
         <span className="flex-1 text-left">Поиск...</span>
         <kbd className="text-[9px] text-slate-300 font-mono border border-slate-200 px-1 py-0.5 rounded">⌘K</kbd>
       </button>
+      </Tooltip>
 
       {/* Palette overlay */}
       <AnimatePresence>
