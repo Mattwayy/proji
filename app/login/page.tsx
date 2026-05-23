@@ -158,21 +158,29 @@ export default function LoginPage() {
 
           {/* Hints */}
           <div className="px-8 pb-6 space-y-2">
-            <div className="bg-slate-50 border border-slate-100 rounded-xl p-3">
+            <button
+              type="button"
+              onClick={() => setForm({ email: 'admin@proji.com', password: 'proji2024', lobbyKey: 'PROJI-2024-ALPHA' })}
+              className="w-full text-left bg-slate-50 border border-slate-100 rounded-xl p-3 hover:border-slate-300 hover:bg-slate-100 transition-all cursor-pointer"
+            >
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1.5">
-                Тестовые данные · Управленец
+                Тестовые данные · Управленец <span className="normal-case font-normal">(нажмите для заполнения)</span>
               </p>
               <p className="text-xs text-slate-500 font-mono">admin@proji.com / proji2024</p>
               <p className="text-xs text-slate-500 font-mono">Ключ: PROJI-2024-ALPHA</p>
-            </div>
-            <div className="bg-blue-50/60 border border-blue-100 rounded-xl p-3">
+            </button>
+            <button
+              type="button"
+              onClick={() => setForm({ email: 'employer@proji.com', password: 'employer2024', lobbyKey: 'PROJI-EMP-2024' })}
+              className="w-full text-left bg-blue-50/60 border border-blue-100 rounded-xl p-3 hover:border-blue-300 hover:bg-blue-50 transition-all cursor-pointer"
+            >
               <p className="text-[10px] font-bold text-blue-400 uppercase tracking-wide mb-1.5">
-                Тестовые данные · Сотрудник
+                Тестовые данные · Сотрудник <span className="normal-case font-normal">(нажмите для заполнения)</span>
               </p>
               <p className="text-xs text-slate-500 font-mono">employer@proji.com / employer2024</p>
               <p className="text-xs text-slate-500 font-mono">Ключ: PROJI-EMP-2024</p>
               <p className="text-xs text-slate-500 font-mono">Ключ Маркетинга: MKT-I9J0K1L2</p>
-            </div>
+            </button>
           </div>
         </div>
       </motion.div>
