@@ -12,9 +12,22 @@ const PATH_ACTIONS: Record<string, string[]> = {
   '/board': ['Найти заторы', 'Прогноз спринта', 'Оптимизировать'],
   '/documents': ['Анализ рисков', 'Рекомендации', 'Резюме'],
   '/analytics': ['Deep Drill', 'Прогноз Q3', 'Экспорт'],
-  '/chat': ['Ключевые инсайты', 'Резюме сессии'],
+  '/chat': [
+    'Как начать работу с Proji?',
+    'Что такое домены и зачем они нужны?',
+    'Как создать и настроить проект?',
+    'Как работает AI консультант?',
+    'Как пригласить участников команды?',
+    'Что такое библиотека сценариев?',
+    'Как использовать аналитику?',
+    'Как экспортировать отчёты?',
+  ],
   '/projects': ['Статус проектов', 'Риски', 'Дедлайны'],
   '/team': ['Загрузка команды', 'KPI сотрудников'],
+};
+
+const PATH_SECTION_LABEL: Record<string, string> = {
+  '/chat': 'Вопросы по сервису',
 };
 
 export function ContextSidebar() {
@@ -29,6 +42,7 @@ export function ContextSidebar() {
   const [input, setInput] = useState('');
   const [tab, setTab] = useState<'chat' | 'history'>('chat');
   const [thought, setThought] = useState('');
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useModalClose(() => setIsAiPanelOpen(false), isAiPanelOpen);
   const endRef = useRef<HTMLDivElement>(null);
@@ -124,18 +138,23 @@ export function ContextSidebar() {
           {tab === 'chat' && (
             <>
               <div className="flex-1 overflow-y-auto px-3 py-4 space-y-4">
-                {/* Quick actions */}
+                {/* Quick actions / FAQ */}
                 {actions.length > 0 && messages.length === 0 && (
                   <div className="space-y-2">
-                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Быстрые действия</p>
+                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">
+                      {PATH_SECTION_LABEL[pathname] ?? 'Быстрые действия'}
+                    </p>
                     {actions.map((a) => (
                       <button
                         key={a}
-                        onClick={() => send(a)}
-                        className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl bg-slate-50 hover:bg-proji-primary/5 hover:text-proji-primary text-slate-600 text-xs font-semibold transition-all group"
+                        onClick={() => {
+                          setInput(a);
+                          setTimeout(() => inputRef.current?.focus(), 0);
+                        }}
+                        className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl bg-slate-50 hover:bg-proji-primary/5 hover:text-proji-primary text-slate-600 text-xs font-semibold transition-all group text-left"
                       >
-                        {a}
-                        <ChevronRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <span>{a}</span>
+                        <ChevronRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
                       </button>
                     ))}
                   </div>
@@ -180,10 +199,11 @@ export function ContextSidebar() {
               <div className="p-3 border-t border-slate-100">
                 <div className="flex items-end gap-2">
                   <textarea
+                    ref={inputRef}
                     value={input}
                     onChange={(e) => { setInput(e.target.value); e.target.style.height = 'auto'; e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'; }}
                     onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }}
-                    placeholder="Спросить про эту страницу..."
+                    placeholder="написать вопрос..."
                     rows={1}
                     className="flex-1 min-w-0 resize-none bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-proji-primary transition-colors"
                     style={{ minHeight: 38 }}

@@ -1,16 +1,19 @@
 'use client';
 import { useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Send, Loader2, Sparkles, ChevronRight } from 'lucide-react';
+import { ArrowUp, Loader2, Sparkles, ChevronRight, Info, CircleCheck } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import Link from 'next/link';
 import { useAppStore } from '../../src/store/useAppStore';
 
-const QUICK_PROMPTS = [
-  'Проанализируй текущее состояние бизнеса',
-  'Составь план на следующий квартал',
-  'Найди узкие места в процессах',
-  'Сформируй отчет по KPI',
+const SCENARIO_PROMPTS = [
+  'Сгенерировать отчет',
+  'Найти узкие места',
+  'Подготовь презентацию',
+  'Оптимизируй процессы',
+  'Разработай документ',
+  'Проведи аудит',
 ];
 
 export default function ChatPage() {
@@ -20,7 +23,8 @@ export default function ChatPage() {
     isProcessing, setIsProcessing,
     currentThought, setCurrentThought,
     currentDomain,
-    setChatHistory, chatHistory,
+    setChatHistory,
+    isAiPanelOpen, setIsAiPanelOpen,
   } = useAppStore();
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -30,7 +34,6 @@ export default function ChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [allMessages, currentThought]);
 
-  // Load prompt injected from Prompts Library
   useEffect(() => {
     const pending = localStorage.getItem('proji_pending_prompt');
     if (pending) {
@@ -86,36 +89,64 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full relative">
+      {/* Info / FAQ button */}
+      <button
+        onClick={() => setIsAiPanelOpen(!isAiPanelOpen)}
+        className="absolute top-4 right-4 z-20 w-8 h-8 rounded-full border border-slate-200 bg-white text-slate-400 hover:text-proji-primary hover:border-proji-primary/40 flex items-center justify-center transition-colors shadow-sm"
+        title="Вопросы по сервису"
+      >
+        <Info size={14} />
+      </button>
+
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 space-y-6">
         {allMessages.length === 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col items-center justify-center h-full gap-8 text-center"
+            className="flex flex-col items-center justify-center min-h-full gap-8 text-center pt-8 pb-4"
           >
+            {/* Hero title */}
             <div>
-              <div className="w-16 h-16 rounded-3xl bg-proji-primary/10 flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="text-proji-primary" size={28} />
-              </div>
-              <h2 className="text-2xl font-black tracking-tight text-proji-dark mb-2">Proji AI</h2>
-              <p className="text-proji-secondary text-sm max-w-xs">
-                Ваш AI-консультант по управлению бизнесом. Задайте вопрос или выберите одно из предложений.
+              <h1 className="text-3xl md:text-4xl font-black tracking-tight mb-3 leading-tight">
+                <span className="bg-gradient-to-r from-blue-600 to-teal-500 bg-clip-text text-transparent">
+                  Развивайте и управляйте
+                  <br />своей компанией через ИИ
+                </span>
+              </h1>
+              <p className="text-proji-secondary text-sm max-w-xs mx-auto leading-relaxed">
+                Начните с выбора действия, нужного домена или конкретной функции.
               </p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-xl">
-              {QUICK_PROMPTS.map((prompt) => (
-                <button
-                  key={prompt}
-                  onClick={() => sendMessage(prompt)}
-                  className="text-left p-4 rounded-2xl border border-proji-border bg-white hover:border-proji-primary/30 hover:bg-proji-primary/5 transition-all group"
-                >
-                  <span className="text-sm font-medium text-proji-dark group-hover:text-proji-primary">{prompt}</span>
-                  <ChevronRight size={14} className="text-proji-secondary mt-1 group-hover:text-proji-primary" />
-                </button>
-              ))}
+
+            {/* Popular scenarios */}
+            <div className="w-full max-w-lg space-y-3">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-proji-secondary">
+                Популярные сценарии
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {SCENARIO_PROMPTS.map((prompt) => (
+                  <button
+                    key={prompt}
+                    onClick={() => sendMessage(prompt)}
+                    className="px-3 py-2.5 rounded-xl border border-proji-border bg-white hover:border-proji-primary/30 hover:bg-proji-primary/5 transition-all text-sm text-proji-dark hover:text-proji-primary font-medium"
+                  >
+                    {prompt}
+                  </button>
+                ))}
+              </div>
             </div>
+
+            {/* Scenarios library link */}
+            <Link
+              href="/scenarios"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-proji-border bg-white hover:border-proji-primary/30 hover:bg-proji-primary/5 transition-all text-sm text-proji-dark hover:text-proji-primary"
+            >
+              <CircleCheck size={15} className="text-proji-primary" />
+              <span>Перейти в библиотеку сценариев</span>
+              <ChevronRight size={14} />
+            </Link>
           </motion.div>
         )}
 
@@ -170,30 +201,33 @@ export default function ChatPage() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input */}
+      {/* Input bar */}
       <div className="px-4 md:px-8 py-4 border-t border-proji-border bg-proji-bg">
-        <div className="max-w-3xl mx-auto flex items-end gap-3">
-          <textarea
-            ref={textareaRef}
-            value={inputText}
-            onChange={(e) => {
-              setInputText(e.target.value);
-              e.target.style.height = 'auto';
-              e.target.style.height = Math.min(e.target.scrollHeight, 160) + 'px';
-            }}
-            onKeyDown={handleKeyDown}
-            placeholder="Напишите сообщение... (Enter — отправить, Shift+Enter — новая строка)"
-            rows={1}
-            className="flex-1 min-w-0 resize-none rounded-2xl border border-proji-border bg-white px-4 py-3 text-sm text-proji-dark placeholder:text-proji-secondary focus:outline-none focus:border-proji-primary transition-colors"
-            style={{ minHeight: 48 }}
-          />
-          <button
-            onClick={() => sendMessage()}
-            disabled={!inputText.trim() || isProcessing}
-            className="flex-shrink-0 w-11 h-11 rounded-2xl bg-proji-primary text-white flex items-center justify-center hover:bg-proji-primary/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-          >
-            {isProcessing ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
-          </button>
+        <div className="max-w-3xl mx-auto">
+          <div className="flex items-end gap-3 rounded-2xl border border-proji-border bg-white px-4 py-3 focus-within:border-proji-primary/50 transition-colors shadow-sm">
+            <Sparkles size={15} className="text-proji-secondary/60 flex-shrink-0 mb-0.5" />
+            <textarea
+              ref={textareaRef}
+              value={inputText}
+              onChange={(e) => {
+                setInputText(e.target.value);
+                e.target.style.height = 'auto';
+                e.target.style.height = Math.min(e.target.scrollHeight, 160) + 'px';
+              }}
+              onKeyDown={handleKeyDown}
+              placeholder="Задайте вопрос AI консультанту..."
+              rows={1}
+              className="flex-1 min-w-0 resize-none bg-transparent text-sm text-proji-dark placeholder:text-proji-secondary focus:outline-none"
+              style={{ minHeight: 24 }}
+            />
+            <button
+              onClick={() => sendMessage()}
+              disabled={!inputText.trim() || isProcessing}
+              className="flex-shrink-0 w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-teal-400 text-white flex items-center justify-center disabled:opacity-40 transition-all hover:opacity-90"
+            >
+              {isProcessing ? <Loader2 size={15} className="animate-spin" /> : <ArrowUp size={15} />}
+            </button>
+          </div>
         </div>
       </div>
     </div>

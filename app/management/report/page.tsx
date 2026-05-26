@@ -108,11 +108,11 @@ export default function ManagementReportPage() {
             <div className="flex-1 h-px bg-slate-100" />
           </div>
           <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
-            <div className="grid grid-cols-4 gap-4 px-5 py-3 border-b border-slate-50 text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <div className="hidden sm:grid grid-cols-4 gap-4 px-5 py-3 border-b border-slate-50 text-[10px] font-black uppercase tracking-widest text-slate-400">
               <span>Отдел</span><span>Выполнено</span><span>В работе</span><span>Риск</span>
             </div>
             {DEPT_STATS.map((d) => (
-              <div key={d.dept} className="grid grid-cols-4 gap-4 px-5 py-3.5 border-b border-slate-50 last:border-0 hover:bg-slate-50 transition-colors">
+              <div key={d.dept} className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 px-5 py-3.5 border-b border-slate-50 last:border-0 hover:bg-slate-50 transition-colors">
                 <p className="text-sm font-semibold text-slate-800 flex items-center gap-2">
                   <Users size={13} className="text-proji-primary" />{d.dept}
                 </p>

@@ -1,13 +1,13 @@
 'use client';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, Folder, CheckCircle2, Users, FileText, MessageSquare } from 'lucide-react';
+import { MessageSquare, Folder, CheckCircle2, Users, User } from 'lucide-react';
 
 const MOBILE_ITEMS = [
   { icon: MessageSquare, label: 'Чат', href: '/chat' },
   { icon: Folder, label: 'Проекты', href: '/projects' },
   { icon: CheckCircle2, label: 'Задачи', href: '/tasks' },
   { icon: Users, label: 'Команда', href: '/team' },
-  { icon: FileText, label: 'Доки', href: '/documents' },
+  { icon: User, label: 'Профиль', href: '/cabinet' },
 ];
 
 export function MobileNav() {
@@ -15,7 +15,10 @@ export function MobileNav() {
   const router = useRouter();
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-proji-border flex items-center justify-around px-2 py-2 safe-area-inset-bottom">
+    <nav
+      className="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-proji-border flex items-center justify-around px-2 pt-2"
+      style={{ paddingBottom: 'max(8px, env(safe-area-inset-bottom, 8px))' }}
+    >
       {MOBILE_ITEMS.map((item) => {
         const active = pathname === item.href || pathname.startsWith(item.href + '/');
         return (

@@ -99,13 +99,14 @@ export default function BoardPage() {
               <button
                 key={v.id}
                 onClick={() => setView(v.id)}
-                className={`flex items-center gap-1.5 px-4 py-2 text-[10px] font-black uppercase tracking-wider transition-all ${
+                className={`flex items-center gap-1.5 px-2 sm:px-4 py-2 text-[10px] font-black uppercase tracking-wider transition-all ${
                   view === v.id
                     ? 'bg-slate-800 text-white'
                     : 'text-slate-400 hover:text-slate-700 hover:bg-slate-50'
                 }`}
               >
-                {v.label}
+                <v.icon size={13} className="shrink-0" />
+                <span className="hidden sm:inline">{v.label}</span>
               </button>
             ))}
           </div>
@@ -122,11 +123,11 @@ export default function BoardPage() {
                 className="h-full"
               >
                 <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 h-full min-h-[500px]">
-                  <div className="grid grid-cols-3 gap-5 h-full">
+                  <div className="flex md:grid md:grid-cols-3 gap-5 h-full overflow-x-auto md:overflow-x-visible">
                     {COLUMNS.map((col) => (
                       <div
                         key={col.id}
-                        className="flex flex-col gap-3"
+                        className="flex flex-col gap-3 min-w-[260px] md:min-w-0"
                         onDragOver={(e) => e.preventDefault()}
                         onDrop={() => draggedId && moveTask(draggedId, col.id)}
                       >

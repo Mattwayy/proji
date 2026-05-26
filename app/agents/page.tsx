@@ -190,7 +190,7 @@ export default function AgentsPage() {
 
       {/* Cards grid */}
       <div className="flex-1 overflow-y-auto px-8 pb-8">
-        <div className="grid grid-cols-3 gap-5 items-start">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
           {AGENTS.map((agent, i) => {
             const Icon = agent.icon;
             return (
@@ -285,7 +285,7 @@ export default function AgentsPage() {
                 </button>
               </div>
 
-              <div className="p-8 grid grid-cols-4 gap-4">
+              <div className="p-4 md:p-8 grid grid-cols-2 md:grid-cols-4 gap-4">
                 {TIERS.map((tier) => (
                   <motion.div
                     key={tier.id}

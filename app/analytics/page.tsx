@@ -61,7 +61,7 @@ export default function Page() {
         </motion.div>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {kpis.map((k, i) => (
             <motion.div key={k.label} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: i * 0.07 }}
@@ -84,11 +84,11 @@ export default function Page() {
         </div>
 
         {/* Charts */}
-        <div className="grid grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           {/* Bar Chart */}
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.28 }}
-            className="col-span-3 bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+            className="col-span-1 md:col-span-3 bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h2 className="font-semibold text-slate-800">Выручка по месяцам</h2>
@@ -110,7 +110,7 @@ export default function Page() {
           {/* Weekly Visitors */}
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.35 }}
-            className="col-span-2 bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+            className="col-span-1 md:col-span-2 bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h2 className="font-semibold text-slate-800">Посетители</h2>
@@ -144,7 +144,8 @@ export default function Page() {
           <div className="px-5 py-4 border-b border-slate-100">
             <h2 className="font-semibold text-slate-800">Топ каналов привлечения</h2>
           </div>
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[480px]">
             <thead>
               <tr className="bg-slate-50 text-left text-xs text-slate-500 uppercase tracking-wide">
                 <th className="px-5 py-3 font-medium">Канал</th>
@@ -171,6 +172,7 @@ export default function Page() {
               ))}
             </tbody>
           </table>
+          </div>
         </motion.div>
       </div>
     </PageWrapper>

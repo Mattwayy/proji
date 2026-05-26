@@ -233,7 +233,7 @@ export default function TariffsPage() {
         </div>
 
         {/* Footer note */}
-        <div className="mt-6 grid grid-cols-3 gap-4">
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
             { q: 'Правило расчёта', a: 'Цена считается с 1-го пользователя: тариф × число пользователей. Нет минимального порога.' },
             { q: 'Финтех и Safe Deal', a: 'Финтех-функции доступны через партнёра начиная с тарифа Director. Отдельный договор для Strategic AI Partner.' },

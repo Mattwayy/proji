@@ -1,5 +1,6 @@
 'use client';
 import { useEffect } from 'react';
+import type { CSSProperties } from 'react';
 import { usePathname } from 'next/navigation';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
@@ -26,7 +27,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-proji-bg">
       <Topbar />
-      <div className="flex flex-1 overflow-hidden pb-16 md:pb-0">
+      <div className="flex flex-1 overflow-hidden md:pb-0" style={{ paddingBottom: 'max(64px, calc(52px + env(safe-area-inset-bottom, 12px)))' } as CSSProperties}>
         <Sidebar />
         <main className="flex-1 overflow-y-auto bg-proji-bg">
           {children}
