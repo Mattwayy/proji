@@ -106,11 +106,11 @@ export default function NotesPage() {
       {/* Left: grid */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Header */}
-        <div className="flex items-center gap-3 px-6 pt-6 pb-4 border-b border-slate-200 bg-white shrink-0">
-          <StickyNote size={18} className="text-slate-400" />
-          <h1 className="text-lg font-black text-slate-800 tracking-tight">Заметки</h1>
-          <span className="text-xs text-slate-400 font-medium ml-1">{notes.length}</span>
-          <div className="relative ml-auto w-52">
+        <div className="flex items-center gap-2 md:gap-3 px-4 md:px-6 pt-4 md:pt-6 pb-3 md:pb-4 border-b border-slate-200 bg-white shrink-0">
+          <StickyNote size={18} className="text-slate-400 shrink-0" />
+          <h1 className="text-base md:text-lg font-black text-slate-800 tracking-tight">Заметки</h1>
+          <span className="text-xs text-slate-400 font-medium">{notes.length}</span>
+          <div className="relative ml-auto flex-1 max-w-[160px] md:max-w-[208px]">
             <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               value={search}
@@ -121,14 +121,14 @@ export default function NotesPage() {
           </div>
           <button
             onClick={createNote}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-white text-xs font-bold rounded-xl hover:bg-slate-700 transition-colors"
+            className="flex items-center gap-1.5 px-3 md:px-4 py-2 bg-slate-800 text-white text-xs font-bold rounded-xl hover:bg-slate-700 transition-colors shrink-0"
           >
-            <Plus size={13} /> Новая
+            <Plus size={13} /> <span className="hidden sm:inline">Новая</span>
           </button>
         </div>
 
         {/* Grid */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6">
           {filtered.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full gap-3 text-slate-400">
               <StickyNote size={40} strokeWidth={1.5} />
@@ -166,7 +166,7 @@ export default function NotesPage() {
                       <p className="text-[10px] text-slate-400 mt-3">{fmt(note.updatedAt)}</p>
                       <button
                         onClick={(e) => { e.stopPropagation(); deleteNote(note.id); }}
-                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 p-1.5 rounded-lg bg-white/80 text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all"
+                        className="absolute top-2 right-2 md:opacity-0 md:group-hover:opacity-100 p-1.5 rounded-lg bg-white/80 text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all"
                       >
                         <Trash2 size={12} />
                       </button>
@@ -187,7 +187,7 @@ export default function NotesPage() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 60, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className={`w-96 shrink-0 border-l border-slate-200 flex flex-col h-full shadow-xl ${colorMeta(editing.color).bg}`}
+            className={`fixed md:relative inset-0 md:inset-auto md:w-96 md:shrink-0 border-l border-slate-200 flex flex-col md:h-full shadow-xl z-[200] md:z-auto ${colorMeta(editing.color).bg}`}
           >
             {/* Editor header */}
             <div className="flex items-center gap-2 px-5 py-4 border-b border-slate-200/70 shrink-0">

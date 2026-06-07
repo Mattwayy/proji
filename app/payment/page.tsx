@@ -15,7 +15,7 @@ export default function PaymentPage() {
 
   return (
     <div className="flex flex-col h-full bg-[#f5f7fc] overflow-y-auto">
-      <div className="max-w-lg mx-auto w-full px-6 py-10">
+      <div className="max-w-lg mx-auto w-full px-4 md:px-6 py-8 md:py-10">
         <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-2">AI Tools · Оплата</p>
         <h1 className="text-2xl font-black text-slate-800 mb-6">Оформление подписки</h1>
 

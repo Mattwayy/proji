@@ -1,0 +1,380 @@
+'use client';
+
+const animStyle = `
+  @keyframes rm-right   { 0% { left:-40%; } 100% { left:130%; } }
+  @keyframes dash-merge { 0% { stroke-dashoffset:70; } 100% { stroke-dashoffset:0; } }
+`;
+
+const card = 'flex-1 min-w-0 bg-white/[0.07] rounded-xl p-[12px]';
+
+function Connector({ delay }: { delay: string }) {
+  return (
+    <div
+      className="relative h-[2px] w-[36px] mx-1 flex-shrink-0 overflow-hidden"
+      style={{ background: 'rgba(59,130,246,0.15)' }}
+    >
+      <div
+        className="absolute top-[-4px] bottom-[-4px] w-[40%]"
+        style={{
+          background: 'linear-gradient(90deg,transparent,#60a5fa,transparent)',
+          animation: 'rm-right 1.8s linear infinite',
+          animationDelay: delay,
+        }}
+      />
+    </div>
+  );
+}
+
+function BezierMerge({ filterId }: { filterId: string }) {
+  return (
+    <svg width="48" height="172" viewBox="0 0 48 172" fill="none" className="flex-shrink-0">
+      <defs>
+        <filter id={filterId}>
+          <feGaussianBlur stdDeviation="2" result="b" />
+          <feMerge>
+            <feMergeNode in="b" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      <path d="M0,38 C34,38 34,86 48,86"  stroke="rgba(59,130,246,0.15)" strokeWidth="2" fill="none" />
+      <path d="M0,134 C34,134 34,86 48,86" stroke="rgba(59,130,246,0.15)" strokeWidth="2" fill="none" />
+      <path d="M0,38 C34,38 34,86 48,86"  stroke="#60a5fa" strokeWidth="1.5" fill="none"
+            strokeDasharray="10 48" filter={`url(#${filterId})`}
+            style={{ animation: 'dash-merge 1.8s linear infinite', animationDelay: '0.8s' }} />
+      <path d="M0,134 C34,134 34,86 48,86" stroke="#60a5fa" strokeWidth="1.5" fill="none"
+            strokeDasharray="10 48" filter={`url(#${filterId})`}
+            style={{ animation: 'dash-merge 1.8s linear infinite', animationDelay: '0.8s' }} />
+    </svg>
+  );
+}
+
+/* ═══════════════════════════════════════
+   A — Производство
+═══════════════════════════════════════ */
+export function IllustrationProduction() {
+  return (
+    <div className="flex flex-col gap-6 w-full">
+      <style>{animStyle}</style>
+
+      <h2 className="text-[2rem] font-black text-white leading-tight">
+        Управляйте производством и запасами
+      </h2>
+      <p className="text-[1rem] font-semibold text-slate-500">
+        От заказа до отгрузки — всё под контролем.
+      </p>
+
+      <div className="flex items-center w-full">
+
+        <div className="flex flex-col gap-4 flex-1 min-w-0">
+
+          {/* Path A: Заказ → Производство */}
+          <div className="flex items-center">
+            <div className={`${card} border border-blue-500/25`}>
+              <p className="text-xs font-bold text-slate-300 mb-2 text-center">Заказ</p>
+              <div className="space-y-[6px]">
+                {([['#3b82f6', 90], ['#8b5cf6', 62], ['#f59e0b', 35]] as [string, number][]).map(([c, w], i) => (
+                  <div key={i} className="flex items-center gap-[5px]">
+                    <div className="w-[7px] h-[7px] rounded-sm flex-shrink-0" style={{ background: c + '99' }} />
+                    <div className="flex-1 h-[5px] bg-white/10 rounded-full overflow-hidden">
+                      <div className="h-full rounded-full" style={{ width: `${w}%`, background: c + '80' }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <Connector delay="0s" />
+            <div className={`${card} border border-violet-500/25`}>
+              <p className="text-xs font-bold text-slate-300 mb-2 text-center">Производство</p>
+              <div className="space-y-[6px]">
+                {([[95, '#34d399'], [78, '#60a5fa'], [44, '#f59e0b']] as [number, string][]).map(([w, c], i) => (
+                  <div key={i} className="flex items-center gap-[4px]">
+                    <div className="w-[5px] h-[5px] rounded-full flex-shrink-0" style={{ background: c + 'cc' }} />
+                    <div className="flex-1 h-[4px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.1)' }}>
+                      <div className="h-full rounded-full" style={{ width: `${w}%`, background: c + 'cc' }} />
+                    </div>
+                    <span className="text-[7px] text-slate-500 font-mono w-[16px] text-right flex-shrink-0">{w}%</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Path B: Сырьё → Контроль */}
+          <div className="flex items-center">
+            <div className={`${card} border border-blue-400/20`}>
+              <p className="text-xs font-bold text-slate-300 mb-2 text-center">Сырьё</p>
+              <div className="flex items-end justify-center gap-[5px]" style={{ height: '28px' }}>
+                {([[85, '#3b82f6'], [58, '#8b5cf6'], [38, '#f59e0b'], [96, '#10b981']] as [number, string][]).map(([h, c], i) => (
+                  <div key={i} className="w-[11px] rounded-sm flex-shrink-0"
+                       style={{ height: `${h}%`, background: c + '80' }} />
+                ))}
+              </div>
+            </div>
+            <Connector delay="0.4s" />
+            <div className={`${card} border border-amber-500/20`}>
+              <p className="text-xs font-bold text-slate-300 mb-2 text-center">Контроль</p>
+              <div className="space-y-[6px]">
+                {([['#34d399', true, '100%'], ['#34d399', true, '80%'], ['#f87171', false, '30%']] as [string, boolean, string][]).map(([c, ok, w], i) => (
+                  <div key={i} className="flex items-center gap-[5px]">
+                    <div className="w-[8px] h-[8px] rounded-full flex-shrink-0"
+                         style={{ background: ok ? c + 'cc' : c + '40' }} />
+                    <div className="flex-1 h-[5px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
+                      <div className="h-full rounded-full" style={{ width: w, background: c + (ok ? '45' : '25') }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <BezierMerge filterId="glow-prod" />
+
+        <div className="flex items-center flex-1 min-w-0">
+          <div className={`${card} border border-slate-400/20`}>
+            <p className="text-xs font-bold text-slate-300 mb-2 text-center">Отгрузка</p>
+            <div className="space-y-[6px]">
+              {([['#3b82f6'], ['#10b981'], ['#f59e0b']] as [string][]).map(([c], i) => (
+                <div key={i} className="flex items-center gap-[5px]">
+                  <div className="w-[7px] h-[7px] rounded-full flex-shrink-0" style={{ background: c + 'cc' }} />
+                  <div className="flex-1 h-[5px] rounded-full" style={{ background: c + '25' }} />
+                </div>
+              ))}
+            </div>
+          </div>
+          <Connector delay="1.3s" />
+          <div className={`${card} border border-emerald-500/30`}>
+            <p className="text-xs font-bold text-emerald-400 mb-1.5 text-center">Поставка</p>
+            <div className="text-center mb-1.5">
+              <span className="text-[1.2rem] font-black text-emerald-400 leading-none">96%</span>
+              <p className="text-[8px] text-slate-500 mt-0.5">в срок</p>
+            </div>
+            <div className="flex items-end justify-center gap-[3px]" style={{ height: '16px' }}>
+              {[50, 60, 55, 72, 80, 88, 96].map((h, i) => (
+                <div key={i} className="w-[6px] rounded-sm flex-shrink-0"
+                     style={{ height: `${h}%`, background: i === 6 ? '#10b981' : `rgba(16,185,129,${0.18 + i * 0.1})` }} />
+              ))}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════
+   B — Воронка продаж
+═══════════════════════════════════════ */
+export function IllustrationSales() {
+  return (
+    <div className="flex flex-col gap-6 w-full">
+      <style>{animStyle}</style>
+
+      <h2 className="text-[2rem] font-black text-white leading-tight">
+        Управляйте продажами и клиентами
+      </h2>
+      <p className="text-[1rem] font-semibold text-slate-500">
+        От первого контакта до закрытой сделки.
+      </p>
+
+      <div className="flex items-center w-full">
+
+        <div className="flex flex-col gap-4 flex-1 min-w-0">
+
+          {/* Path A: Лиды → Предложения */}
+          <div className="flex items-center">
+            <div className={`${card} border border-blue-500/25`}>
+              <p className="text-xs font-bold text-slate-300 mb-1.5 text-center">Лиды</p>
+              <div className="text-center mb-1.5">
+                <span className="text-base font-black text-blue-400 leading-none">1 200</span>
+              </div>
+              <div className="h-[6px] bg-white/10 rounded-full overflow-hidden">
+                <div className="h-full bg-blue-400/70 rounded-full w-full" />
+              </div>
+            </div>
+            <Connector delay="0s" />
+            <div className={`${card} border border-violet-500/25`}>
+              <p className="text-xs font-bold text-slate-300 mb-1.5 text-center">Предложения</p>
+              <div className="text-center mb-1.5">
+                <span className="text-base font-black text-violet-400 leading-none">72</span>
+              </div>
+              <div className="h-[6px] bg-white/10 rounded-full overflow-hidden">
+                <div className="h-full bg-violet-400/70 rounded-full" style={{ width: '20%' }} />
+              </div>
+            </div>
+          </div>
+
+          {/* Path B: Контакты → Встречи */}
+          <div className="flex items-center">
+            <div className={`${card} border border-sky-400/20`}>
+              <p className="text-xs font-bold text-slate-300 mb-1.5 text-center">Контакты</p>
+              <div className="text-center mb-1.5">
+                <span className="text-base font-black text-sky-400 leading-none">720</span>
+              </div>
+              <div className="h-[6px] bg-white/10 rounded-full overflow-hidden">
+                <div className="h-full bg-sky-400/70 rounded-full" style={{ width: '60%' }} />
+              </div>
+            </div>
+            <Connector delay="0.4s" />
+            <div className={`${card} border border-amber-500/20`}>
+              <p className="text-xs font-bold text-slate-300 mb-1.5 text-center">Встречи</p>
+              <div className="text-center mb-1.5">
+                <span className="text-base font-black text-amber-400 leading-none">190</span>
+              </div>
+              <div className="h-[6px] bg-white/10 rounded-full overflow-hidden">
+                <div className="h-full bg-amber-400/70 rounded-full" style={{ width: '35%' }} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <BezierMerge filterId="glow-sales" />
+
+        <div className="flex items-center flex-1 min-w-0">
+          <div className={`${card} border border-slate-400/20`}>
+            <p className="text-xs font-bold text-slate-300 mb-2 text-center">Переговоры</p>
+            <div className="space-y-[6px]">
+              {([['#3b82f6', true], ['#10b981', true], ['#f59e0b', false], ['#f87171', false]] as [string, boolean][]).map(([c, active], i) => (
+                <div key={i} className="flex items-center gap-[5px]">
+                  <div className="w-[7px] h-[7px] rounded-full flex-shrink-0"
+                       style={{ background: active ? c + 'cc' : 'rgba(255,255,255,0.12)' }} />
+                  <div className="flex-1 h-[5px] rounded-full"
+                       style={{ background: active ? c + '30' : 'rgba(255,255,255,0.08)' }} />
+                </div>
+              ))}
+            </div>
+          </div>
+          <Connector delay="1.3s" />
+          <div className={`${card} border border-emerald-500/30`}>
+            <p className="text-xs font-bold text-emerald-400 mb-1 text-center">Сделки</p>
+            <div className="text-center mb-1">
+              <span className="text-[1.2rem] font-black text-emerald-400 leading-none">28</span>
+              <p className="text-[8px] text-slate-500 mt-0.5">закрыто</p>
+            </div>
+            <div className="h-[5px] bg-emerald-400/15 rounded-full overflow-hidden">
+              <div className="h-full bg-emerald-400/80 rounded-full" style={{ width: '82%' }} />
+            </div>
+            <p className="text-[8px] text-emerald-400/70 text-center mt-1.5 font-bold">+₽2.4М выручка</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════
+   C — HR / Команда
+═══════════════════════════════════════ */
+export function IllustrationHR() {
+  return (
+    <div className="flex flex-col gap-6 w-full">
+      <style>{animStyle}</style>
+
+      <h2 className="text-[2rem] font-black text-white leading-tight">
+        Управляйте талантами и командой
+      </h2>
+      <p className="text-[1rem] font-semibold text-slate-500">
+        Найм, адаптация и развитие — в одном месте.
+      </p>
+
+      <div className="flex items-center w-full">
+
+        <div className="flex flex-col gap-4 flex-1 min-w-0">
+
+          {/* Path A: Вакансии → Кандидаты */}
+          <div className="flex items-center">
+            <div className={`${card} border border-blue-500/25`}>
+              <p className="text-xs font-bold text-slate-300 mb-2 text-center">Вакансии</p>
+              <div className="space-y-[6px]">
+                {([['#3b82f6', 70], ['#8b5cf6', 45], ['#f59e0b', 88]] as [string, number][]).map(([c, w], i) => (
+                  <div key={i} className="flex items-center gap-[5px]">
+                    <div className="w-[7px] h-[7px] rounded-full flex-shrink-0" style={{ background: c + 'cc' }} />
+                    <div className="flex-1 h-[5px] bg-white/10 rounded-full overflow-hidden">
+                      <div className="h-full rounded-full" style={{ width: `${w}%`, background: c + '70' }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <Connector delay="0s" />
+            <div className={`${card} border border-violet-500/25`}>
+              <p className="text-xs font-bold text-slate-300 mb-2 text-center">Кандидаты</p>
+              <div className="space-y-[6px]">
+                {([[90, '#818cf8'], [50, '#a78bfa'], [20, '#34d399']] as [number, string][]).map(([w, c], i) => (
+                  <div key={i} className="h-[6px] bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-full rounded-full" style={{ width: `${w}%`, background: c }} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Path B: Интервью → Оффер */}
+          <div className="flex items-center">
+            <div className={`${card} border border-blue-400/20`}>
+              <p className="text-xs font-bold text-slate-300 mb-2 text-center">Интервью</p>
+              <div className="flex justify-center gap-[6px]">
+                {([['А', '#3b82f6'], ['В', '#8b5cf6'], ['М', '#10b981']] as [string, string][]).map(([l, c], i) => (
+                  <div key={i} className="relative flex-shrink-0">
+                    <div className="w-7 h-7 rounded-full flex items-center justify-center text-[9px] font-bold text-white"
+                         style={{ background: c }}>{l}</div>
+                    <div className="absolute bottom-0 right-0 w-2 h-2 bg-emerald-400 rounded-full border border-slate-900" />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <Connector delay="0.4s" />
+            <div className={`${card} border border-amber-500/20`}>
+              <p className="text-xs font-bold text-slate-300 mb-2 text-center">Оффер</p>
+              <div className="space-y-[6px]">
+                {([['#34d399', '100%'], ['#34d399', '75%'], ['#f59e0b', '30%']] as [string, string][]).map(([c, w], i) => (
+                  <div key={i} className="flex items-center gap-[5px]">
+                    <div className="w-[8px] h-[8px] rounded-sm flex-shrink-0"
+                         style={{ background: i < 2 ? c + 'cc' : 'rgba(255,255,255,0.1)', border: i < 2 ? 'none' : '1px solid rgba(255,255,255,0.15)' }} />
+                    <div className="flex-1 h-[5px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
+                      <div className="h-full rounded-full" style={{ width: w, background: c + '70' }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <BezierMerge filterId="glow-hr" />
+
+        <div className="flex items-center flex-1 min-w-0">
+          <div className={`${card} border border-slate-400/20`}>
+            <p className="text-xs font-bold text-slate-300 mb-2 text-center">Онбординг</p>
+            <div className="space-y-[6px]">
+              {[true, true, true, false].map((done, i) => (
+                <div key={i} className="flex items-center gap-[5px]">
+                  <div className={`w-[8px] h-[8px] rounded-sm flex-shrink-0 border ${done ? 'bg-emerald-400/80 border-emerald-400/50' : 'border-slate-500/50'}`} />
+                  <div className={`flex-1 h-[5px] rounded-full ${done ? 'bg-slate-400/30' : 'bg-slate-600/40'}`} />
+                </div>
+              ))}
+            </div>
+          </div>
+          <Connector delay="1.3s" />
+          <div className={`${card} border border-emerald-500/30`}>
+            <p className="text-xs font-bold text-emerald-400 mb-1.5 text-center">Команда</p>
+            <div className="text-center mb-2">
+              <span className="text-[1.2rem] font-black text-emerald-400 leading-none">+72</span>
+              <p className="text-[8px] text-slate-500 mt-0.5">eNPS индекс</p>
+            </div>
+            <div className="flex justify-center gap-[4px]">
+              {['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b'].map((c, i) => (
+                <div key={i} className="w-[15px] h-[15px] rounded-full flex-shrink-0"
+                     style={{ background: c + 'dd' }} />
+              ))}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}

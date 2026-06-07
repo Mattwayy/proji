@@ -25,18 +25,18 @@ export default function TeamPage() {
     <PageWrapper>
       <div className="px-4 md:px-12 pb-12 max-w-5xl mx-auto w-full">
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
-          <div className="bg-white rounded-2xl border border-proji-border p-4">
-            <p className="text-xs font-bold text-proji-secondary uppercase tracking-wide mb-1">Всего</p>
-            <p className="text-3xl font-black text-proji-dark">{domainTeam.length}</p>
+        <div className="grid grid-cols-3 gap-2 md:gap-4 mb-6 md:mb-8">
+          <div className="bg-white rounded-2xl border border-proji-border p-3 md:p-4">
+            <p className="text-[10px] md:text-xs font-bold text-proji-secondary uppercase tracking-wide mb-1">Всего</p>
+            <p className="text-2xl md:text-3xl font-black text-proji-dark">{domainTeam.length}</p>
           </div>
-          <div className="bg-white rounded-2xl border border-proji-border p-4">
-            <p className="text-xs font-bold text-proji-secondary uppercase tracking-wide mb-1">В сети</p>
-            <p className="text-3xl font-black text-proji-success">{domainTeam.filter((m) => m.status === 'В сети').length}</p>
+          <div className="bg-white rounded-2xl border border-proji-border p-3 md:p-4">
+            <p className="text-[10px] md:text-xs font-bold text-proji-secondary uppercase tracking-wide mb-1">В сети</p>
+            <p className="text-2xl md:text-3xl font-black text-proji-success">{domainTeam.filter((m) => m.status === 'В сети').length}</p>
           </div>
-          <div className="bg-white rounded-2xl border border-proji-border p-4">
-            <p className="text-xs font-bold text-proji-secondary uppercase tracking-wide mb-1">Задачи</p>
-            <p className="text-3xl font-black text-proji-primary">{domainTeam.reduce((s, m) => s + m.tasks.length, 0)}</p>
+          <div className="bg-white rounded-2xl border border-proji-border p-3 md:p-4">
+            <p className="text-[10px] md:text-xs font-bold text-proji-secondary uppercase tracking-wide mb-1">Задачи</p>
+            <p className="text-2xl md:text-3xl font-black text-proji-primary">{domainTeam.reduce((s, m) => s + m.tasks.length, 0)}</p>
           </div>
         </div>
 
@@ -62,15 +62,15 @@ export default function TeamPage() {
               onClick={() => setSelectedMember(selectedMember?.name === member.name ? null : member)}
               className={`bg-white rounded-3xl border p-6 cursor-pointer transition-all hover:shadow-md ${selectedMember?.name === member.name ? 'border-proji-primary shadow-md' : 'border-proji-border'}`}
             >
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 rounded-2xl bg-proji-primary/10 text-proji-primary font-black text-sm flex items-center justify-center">
+              <div className="flex items-center gap-3 md:gap-4 mb-4">
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-proji-primary/10 text-proji-primary font-black text-sm flex items-center justify-center shrink-0">
                   {member.avatar}
                 </div>
-                <div className="flex-1">
-                  <p className="font-black text-proji-dark">{member.name}</p>
-                  <p className="text-xs text-proji-secondary">{member.role}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="font-black text-proji-dark truncate">{member.name}</p>
+                  <p className="text-xs text-proji-secondary truncate">{member.role}</p>
                 </div>
-                <span className={`text-[10px] font-bold px-2 py-1 rounded-lg ${member.status === 'В сети' ? 'bg-proji-success/10 text-proji-success' : 'bg-slate-100 text-slate-400'}`}>
+                <span className={`text-[10px] font-bold px-2 py-1 rounded-lg shrink-0 ${member.status === 'В сети' ? 'bg-proji-success/10 text-proji-success' : 'bg-slate-100 text-slate-400'}`}>
                   {member.status}
                 </span>
               </div>

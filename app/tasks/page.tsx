@@ -55,34 +55,34 @@ export default function TasksPage() {
     <PageWrapper>
       <div className="px-4 md:px-12 pb-12 max-w-5xl mx-auto w-full">
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-3 gap-2 md:gap-4 mb-6 md:mb-8">
           {[
             { label: 'Всего', value: allTasks.length, color: 'text-proji-dark' },
             { label: 'В работе', value: pending, color: 'text-proji-amber' },
             { label: 'Завершено', value: completed, color: 'text-proji-success' },
           ].map((s) => (
-            <div key={s.label} className="bg-white rounded-2xl border border-proji-border p-4">
-              <p className="text-xs font-bold text-proji-secondary uppercase tracking-wide mb-1">{s.label}</p>
-              <p className={`text-3xl font-black ${s.color}`}>{s.value}</p>
+            <div key={s.label} className="bg-white rounded-2xl border border-proji-border p-3 md:p-4">
+              <p className="text-[10px] md:text-xs font-bold text-proji-secondary uppercase tracking-wide mb-1 truncate">{s.label}</p>
+              <p className={`text-2xl md:text-3xl font-black ${s.color}`}>{s.value}</p>
             </div>
           ))}
         </div>
 
         {/* Add task */}
-        <div className="flex gap-3 mb-6">
+        <div className="flex flex-wrap gap-2 md:gap-3 mb-6">
           <input
             value={newTaskTitle}
             onChange={(e) => setNewTaskTitle(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && addTask()}
             placeholder="Добавить задачу..."
-            className="flex-1 px-4 py-3 rounded-2xl border border-proji-border bg-white text-sm text-proji-dark placeholder:text-proji-secondary focus:outline-none focus:border-proji-primary transition-colors"
+            className="flex-1 min-w-0 px-4 py-3 rounded-2xl border border-proji-border bg-white text-sm text-proji-dark placeholder:text-proji-secondary focus:outline-none focus:border-proji-primary transition-colors"
           />
           <button
             onClick={addTask}
             disabled={!newTaskTitle.trim()}
-            className="px-5 py-3 bg-proji-primary text-white rounded-2xl text-sm font-bold flex items-center gap-2 hover:bg-proji-primary/90 disabled:opacity-40 transition-all"
+            className="px-4 md:px-5 py-3 bg-proji-primary text-white rounded-2xl text-sm font-bold flex items-center gap-2 hover:bg-proji-primary/90 disabled:opacity-40 transition-all shrink-0"
           >
-            <Plus size={16} /> Добавить
+            <Plus size={16} /> <span className="hidden sm:inline">Добавить</span>
           </button>
         </div>
 
@@ -108,7 +108,7 @@ export default function TasksPage() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="flex items-center gap-3 bg-white border border-proji-border rounded-2xl px-4 py-3.5 group"
+                className="flex items-center gap-2 md:gap-3 bg-white border border-proji-border rounded-2xl px-3 md:px-4 py-3 md:py-3.5 group"
               >
                 <button
                   onClick={() => toggleStatus(task.id)}
@@ -121,12 +121,12 @@ export default function TasksPage() {
                   {task.status === 'completed' && <CheckCircle2 size={12} />}
                 </button>
 
-                <span className={`flex-1 text-sm font-medium ${task.status === 'completed' ? 'line-through text-proji-secondary' : 'text-proji-dark'}`}>
+                <span className={`flex-1 min-w-0 text-sm font-medium truncate ${task.status === 'completed' ? 'line-through text-proji-secondary' : 'text-proji-dark'}`}>
                   {task.title}
                 </span>
 
                 {task.relatedToType && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-slate-100 text-slate-500 shrink-0">
+                  <span className="hidden sm:inline text-[10px] font-bold px-2 py-0.5 rounded-lg bg-slate-100 text-slate-500 shrink-0">
                     {task.relatedToType}
                   </span>
                 )}
@@ -137,7 +137,7 @@ export default function TasksPage() {
 
                 <button
                   onClick={() => deleteTask(task.id)}
-                  className="shrink-0 opacity-0 group-hover:opacity-100 p-1 rounded-lg text-slate-300 hover:text-red-400 hover:bg-red-50 transition-all"
+                  className="shrink-0 md:opacity-0 md:group-hover:opacity-100 p-1 rounded-lg text-slate-300 hover:text-red-400 hover:bg-red-50 transition-all"
                 >
                   <X size={14} />
                 </button>

@@ -1,10 +1,9 @@
 'use client';
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import {
-  Plus, CheckCircle2, FileText, BookOpen, StickyNote,
-  KeyRound, CreditCard, Wallet, LogOut, Sun, Moon, Monitor,
+  Plus, KeyRound, CreditCard, Wallet, LogOut, Sun, Moon, Monitor,
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 
@@ -39,6 +38,7 @@ const PATH_TO_LABEL: Record<string, string> = {
   '/projects': 'Проекты', '/projects/manage': 'Управление',
   '/projects/tasks': 'Задачи', '/domains': 'Домены',
   '/notes': 'Заметки',
+  '/manager': 'Менеджер команды',
   '/agents': 'Агенты',
   '/tariffs': 'Тарифы',
   '/payment': 'Оплата',
@@ -48,27 +48,16 @@ const PATH_TO_LABEL: Record<string, string> = {
 export function Topbar() {
   const router = useRouter();
   const pathname = usePathname();
-  const [showAddMenu, setShowAddMenu] = useState(false);
   const [showMobileAccount, setShowMobileAccount] = useState(false);
-  const addMenuRef = useRef<HTMLDivElement>(null);
 
   const {
     currentDomain, setCurrentDomain,
     showDomainDropdown, setShowDomainDropdown,
     setShowDomainWelcome, isProcessing,
-    setShowQuickAddModal, setQuickAddType,
-    setShowTaskCreateModal, projects,
+    projects,
     theme, setTheme,
+    setShowEntityFactory,
   } = useAppStore();
-
-  useEffect(() => {
-    if (!showAddMenu) return;
-    const handler = (e: MouseEvent) => {
-      if (addMenuRef.current && !addMenuRef.current.contains(e.target as Node)) setShowAddMenu(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [showAddMenu]);
 
   const isDomainPage = pathname === '/domains' || pathname.startsWith('/domains/');
 
@@ -170,47 +159,17 @@ export function Topbar() {
             SS
           </button>
 
-          {/* Create button */}
-          <div ref={addMenuRef} className="relative">
-            <Tooltip text="Создать задачу, заметку или документ" side="bottom">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setShowAddMenu((v) => !v)}
-                className="w-8 h-8 rounded-lg bg-proji-primary text-white flex items-center justify-center hover:bg-proji-primary/90 transition-colors shadow-sm"
-              >
-                <Plus size={15} />
-              </motion.button>
-            </Tooltip>
-
-            <AnimatePresence>
-              {showAddMenu && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95, y: 6 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95, y: 6 }}
-                  transition={{ type: 'spring', stiffness: 450, damping: 30 }}
-                  className="absolute right-0 top-full mt-2 w-52 bg-white border border-slate-200 rounded-2xl shadow-xl p-2 z-[200]"
-                >
-                  {[
-                    { label: 'Задача', icon: CheckCircle2, action: () => { setShowTaskCreateModal(true); setShowAddMenu(false); } },
-                    { label: 'Заметка', icon: StickyNote, action: () => { setQuickAddType('заметка'); setShowQuickAddModal(true); setShowAddMenu(false); } },
-                    { label: 'Документ', icon: FileText, action: () => { setQuickAddType('документ'); setShowQuickAddModal(true); setShowAddMenu(false); } },
-                    { label: 'Библиотека промтов', icon: BookOpen, action: () => { router.push('/scenarios'); setShowAddMenu(false); } },
-                  ].map(({ label, icon: Icon, action }) => (
-                    <button
-                      key={label}
-                      onClick={action}
-                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors text-left"
-                    >
-                      <Icon size={15} className="text-proji-primary shrink-0" />
-                      {label}
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+          {/* Entity Factory — главная кнопка создания */}
+          <Tooltip text="Заметки" side="bottom">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowEntityFactory(true)}
+              className="w-8 h-8 rounded-lg bg-proji-primary text-white flex items-center justify-center hover:bg-proji-primary/90 transition-colors shadow-sm"
+            >
+              <Plus size={15} />
+            </motion.button>
+          </Tooltip>
         </div>
       </header>
 

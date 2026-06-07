@@ -199,33 +199,33 @@ export default function ScenariosPage() {
   return (
     <div className="flex flex-col h-full bg-[#f5f7fc] overflow-hidden">
       {/* Header */}
-      <div className="flex items-center gap-4 px-8 pt-7 pb-4 border-b border-slate-200 bg-white shrink-0">
+      <div className="flex flex-wrap items-center gap-3 px-4 md:px-8 pt-5 md:pt-7 pb-4 border-b border-slate-200 bg-white shrink-0">
         <div>
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-0.5">AI Tools</p>
-          <h1 className="text-xl font-black text-slate-800 tracking-tight">Prompts Library</h1>
+          <h1 className="text-lg md:text-xl font-black text-slate-800 tracking-tight">Prompts Library</h1>
         </div>
         <div className="ml-auto flex items-center gap-2">
           {customCount > 0 && (
-            <button onClick={deleteAllCustom} className="flex items-center gap-1.5 px-3 py-2 text-xs text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium">
+            <button onClick={deleteAllCustom} className="hidden sm:flex items-center gap-1.5 px-3 py-2 text-xs text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium">
               <Trash2 size={12} /> Удалить все свои
             </button>
           )}
           <motion.button
             onClick={openCreate}
             whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-            className={`relative flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+            className={`relative flex items-center gap-2 px-3 md:px-4 py-2 rounded-xl text-xs font-bold transition-all ${
               atLimit ? 'bg-yellow-400 text-yellow-900 hover:bg-yellow-300' : 'bg-slate-800 text-white hover:bg-slate-700'
             }`}
           >
             {atLimit && <Crown size={11} className="absolute -top-2.5 left-1/2 -translate-x-1/2 text-yellow-600" />}
             <Plus size={13} />
-            {atLimit ? 'Докупить места →' : 'Создать библиотеку'}
+            <span className="hidden sm:inline">{atLimit ? 'Докупить места →' : 'Создать библиотеку'}</span>
           </motion.button>
         </div>
       </div>
 
       {/* Grid */}
-      <div className="flex-1 overflow-y-auto p-8">
+      <div className="flex-1 overflow-y-auto p-4 md:p-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
           {libraries.map((lib, i) => {
             const lc = getColors(lib.id);
@@ -268,12 +268,12 @@ export default function ScenariosPage() {
             key="lib-modal"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={closeModal}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-6"
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-end md:items-center justify-center p-0 md:p-6"
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 16 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[88vh] flex flex-col overflow-hidden"
+              className="bg-white rounded-t-3xl md:rounded-3xl shadow-2xl w-full md:max-w-2xl max-h-[92svh] md:max-h-[88vh] flex flex-col overflow-hidden"
             >
               {/* Modal header */}
               <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-100 shrink-0">

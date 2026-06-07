@@ -8,7 +8,7 @@ import {
   RefreshCw, ClipboardCheck, Smile, Workflow, Search, MessageSquare,
   CheckCircle2, Archive, BookOpen, User, RotateCcw, Activity,
   Scale, Sparkles, ChevronDown, ChevronRight, ChevronLeft,
-  Settings, Moon, Sun, Monitor, KeyRound, LogOut, Bot, CreditCard, Wallet, Plus,
+  Settings, Moon, Sun, Monitor, KeyRound, LogOut, Bot, CreditCard, Wallet, Plus, Wand2,
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { Tooltip } from './Tooltip';
@@ -34,6 +34,8 @@ const ROUTE_MAP: Record<string, string> = {
   'Задачи': '/tasks',
   'Отчеты': '/reports',
   'Команда': '/team',
+  'Вся команда': '/team',
+  'Менеджер': '/manager',
   'Карта стейкхолдеров': '/stakeholders',
   'Профиль сотрудника': '/team/profile',
   'Документы': '/documents',
@@ -93,6 +95,7 @@ const DETAIL_TIPS: Record<string, string> = {
   'Доска задач':                'Канбан-доска',
   'Отчеты':                     'Аналитика и отчёты проекта',
   'Команда':                    'Профили и структура',
+  'Менеджер':                   'Входящие отчёты и задачи от команды',
   'Карта стейкхолдеров':        'Заинтересованные стороны',
   'Документы':                  'Файлы и документация',
   'Регламенты':                 'Инструкции и стандарты',
@@ -138,6 +141,7 @@ const BASE_ITEMS: NavItem[] = [
   ]},
   { icon: Users, label: 'Команда', href: '/team', details: [
     { label: 'Команда', icon: Users },
+    { label: 'Менеджер', icon: Briefcase },
     { label: 'Карта стейкхолдеров', icon: Users },
   ]},
   { icon: BarChart3, label: 'Отчеты', href: '/reports', details: [
@@ -212,6 +216,7 @@ export function Sidebar() {
     currentDomain, isSidebarExpanded, setIsSidebarExpanded,
     showAccountMenu, setShowAccountMenu, theme, setTheme,
     setShowQuickAddModal, setQuickAddType, projects,
+    setShowEntityFactory,
   } = useAppStore();
 
   // tri-state: null = auto (follow active route), string = explicitly open, 'closed' = explicitly closed
@@ -248,6 +253,11 @@ export function Sidebar() {
       setShowQuickAddModal(true);
       return;
     }
+    // В домене «Управление» «Отчёты» ведут на входящие менеджера, а не на форму сотрудника
+    if (d.label === 'Отчеты' && currentDomain === 'Управление') {
+      router.push('/manager');
+      return;
+    }
     const href = ROUTE_MAP[d.label];
     if (href) router.push(href);
   };
@@ -282,6 +292,21 @@ export function Sidebar() {
       >
         {isSidebarExpanded ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
       </button>
+
+      {/* AI Factory button */}
+      <Tooltip text="Фабрика сущностей — AI разбор текста" side="right">
+        <button
+          onClick={() => setShowEntityFactory(true)}
+          className={`mb-1 shrink-0 flex items-center gap-2.5 rounded-xl transition-all bg-violet-50 hover:bg-violet-100 text-violet-600 font-bold ${
+            isSidebarExpanded
+              ? 'w-full px-3 py-2 text-sm justify-start'
+              : 'w-9 h-9 justify-center'
+          }`}
+        >
+          <Wand2 size={16} className="shrink-0" />
+          {isSidebarExpanded && <span className="whitespace-nowrap">AI Фабрика</span>}
+        </button>
+      </Tooltip>
 
       {/* Nav items */}
       <div className={`flex flex-col gap-0.5 overflow-y-auto overflow-x-hidden scrollbar-hide flex-1 w-full proji-scrollbar ${isSidebarExpanded ? '' : 'items-center'}`}>

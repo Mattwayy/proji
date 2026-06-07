@@ -32,6 +32,8 @@ interface AppStore {
   setPanelPos: (v: { top: number }) => void;
   theme: Theme;
   setTheme: (t: Theme) => void;
+  showEntityFactory: boolean;
+  setShowEntityFactory: (v: boolean) => void;
   showShareModal: boolean;
   setShowShareModal: (v: boolean) => void;
   showQuickAddModal: boolean;
@@ -152,6 +154,8 @@ export const useAppStore = create<AppStore>((set) => ({
   setPanelPos: (v) => set({ panelPos: v }),
   theme: 'light',
   setTheme: (t) => set({ theme: t }),
+  showEntityFactory: false,
+  setShowEntityFactory: (v) => set({ showEntityFactory: v }),
   showShareModal: false,
   setShowShareModal: (v) => set({ showShareModal: v }),
   showQuickAddModal: false,

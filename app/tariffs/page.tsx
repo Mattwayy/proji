@@ -120,7 +120,7 @@ export default function TariffsPage() {
 
   return (
     <div className="flex flex-col h-full bg-[#f5f7fc] overflow-y-auto">
-      <div className="max-w-[1400px] mx-auto w-full px-6 py-10">
+      <div className="max-w-[1400px] mx-auto w-full px-4 md:px-6 py-8 md:py-10">
 
         {/* Header */}
         <div className="text-center mb-10">

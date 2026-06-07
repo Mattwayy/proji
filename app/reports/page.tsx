@@ -4,10 +4,11 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   CheckCircle2, RotateCcw, Folder, ChevronDown, ChevronRight,
-  Timer, Search, X, Send, Play, Pause, Square, CheckSquare,
+  Timer, Search, X, Send, Play, Pause, Square, CheckSquare, Users,
 } from 'lucide-react';
 import { PageWrapper } from '../../src/components/PageWrapper';
 import { useAppStore } from '../../src/store/useAppStore';
+import { EMPLOYEES } from '../../src/data/managerData';
 
 type DoneProject = { id: string; name: string; doneTasks: { title: string }[] };
 
@@ -39,6 +40,8 @@ export default function ReportsPage() {
   const [selectedTasks, setSelectedTasks] = useState<Set<string>>(new Set());
   const [description, setDescription] = useState('');
   const [showProjectDrop, setShowProjectDrop] = useState(false);
+  const [senderEmpId, setSenderEmpId] = useState(EMPLOYEES[0].id);
+  const [sentSuccess, setSentSuccess] = useState(false);
   const dropRef = useRef<HTMLDivElement>(null);
 
   // --- timer ---
@@ -144,6 +147,7 @@ export default function ReportsPage() {
   const handleSend = () => {
     if (!selectedProjectId) return;
     if (selectedTasks.size === 0 && !description.trim()) return;
+
     const report = {
       id: Date.now().toString(),
       date: todayLabel(),
@@ -151,16 +155,41 @@ export default function ReportsPage() {
       tasks: [...selectedTasks],
       duration: formatDuration(elapsed),
     };
+
+    // save to own reports history
     const key = `proji_reports_${selectedProjectId}`;
     const existing = JSON.parse(localStorage.getItem(key) || '[]');
     localStorage.setItem(key, JSON.stringify([report, ...existing]));
-    // reset form and hide it
+
+    // push to manager inbox (proji_manager_inbox)
+    const tasksText = report.tasks.length > 0
+      ? `Выполненные задачи:\n${report.tasks.map((t) => `• ${t}`).join('\n')}`
+      : '';
+    const bodyParts = [tasksText, report.description].filter(Boolean);
+    const inboxItem = {
+      id: `rep_${Date.now()}`,
+      fromId: senderEmpId,
+      type: 'task' as const,
+      title: `Отчёт: ${selectedProject?.name ?? 'Проект'}`,
+      body: bodyParts.join('\n\n'),
+      sentAt: new Date().toISOString(),
+      status: 'new' as const,
+      priority: 'medium' as const,
+      project: selectedProject?.name,
+    };
+    const inboxKey = 'proji_manager_inbox';
+    const inboxExisting = JSON.parse(localStorage.getItem(inboxKey) || '[]');
+    localStorage.setItem(inboxKey, JSON.stringify([inboxItem, ...inboxExisting]));
+
+    // reset form
     setShowForm(false);
     setDescription('');
     setSelectedTasks(new Set());
     setSelectedProjectId('');
     setElapsed(0);
     setRunning(false);
+    setSentSuccess(true);
+    setTimeout(() => setSentSuccess(false), 3000);
     readStorage();
   };
 
@@ -185,7 +214,7 @@ export default function ReportsPage() {
             {totalDone} выполнено
           </span>
         </div>
-        <p className="text-sm text-slate-400 mb-8">История выполненных задач и отправка отчётов администратору</p>
+        <p className="text-sm text-slate-400 mb-8">История выполненных задач и отправка отчётов руководителю</p>
 
         {/* ── Compose report toggle ── */}
         <button
@@ -193,13 +222,27 @@ export default function ReportsPage() {
           className="w-full flex items-center justify-between px-5 py-3.5 bg-white border border-slate-200 rounded-2xl mb-3 hover:border-proji-primary/40 transition-colors group"
         >
           <span className="flex items-center gap-2 text-sm font-bold text-slate-700 group-hover:text-proji-primary transition-colors">
-            <Send size={14} /> Новый отчёт администратору
+            <Send size={14} /> Новый отчёт
           </span>
           <ChevronDown
             size={14}
             className={`text-slate-400 transition-transform duration-200 ${showForm ? 'rotate-180' : ''}`}
           />
         </button>
+
+        <AnimatePresence>
+          {sentSuccess && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              className="flex items-center gap-2.5 px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-2xl mb-3 text-emerald-700"
+            >
+              <CheckCircle2 size={15} className="shrink-0" />
+              <p className="text-sm font-semibold">Отчёт отправлен администратору</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <AnimatePresence>
           {showForm && (
@@ -333,6 +376,36 @@ export default function ReportsPage() {
                     />
                   </div>
 
+                  {/* Sender employee selector */}
+                  <div>
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2 flex items-center gap-1.5">
+                      <Users size={11} /> От кого
+                    </p>
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                      {EMPLOYEES.map((emp) => (
+                        <button
+                          key={emp.id}
+                          onClick={() => setSenderEmpId(emp.id)}
+                          className={`flex items-center gap-2 px-3 py-2.5 rounded-2xl border text-left transition-all ${
+                            senderEmpId === emp.id
+                              ? 'border-proji-primary/40 bg-proji-primary/5 shadow-sm'
+                              : 'border-slate-200 hover:border-slate-300 bg-slate-50'
+                          }`}
+                        >
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 ${emp.bgClass} ${emp.colorClass}`}>
+                            {emp.initials}
+                          </div>
+                          <div className="min-w-0">
+                            <p className={`text-[11px] font-bold truncate ${senderEmpId === emp.id ? 'text-proji-primary' : 'text-slate-700'}`}>
+                              {emp.name.split(' ')[0]}
+                            </p>
+                            <p className="text-[10px] text-slate-400 truncate">{emp.role.split(' ').slice(0, 2).join(' ')}</p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
                   {/* Send */}
                   <button
                     onClick={handleSend}
@@ -343,7 +416,7 @@ export default function ReportsPage() {
                         : 'bg-slate-100 text-slate-400 cursor-not-allowed'
                     }`}
                   >
-                    <Send size={14} /> Отправить отчёт администратору
+                    <Send size={14} /> Отправить администратору
                   </button>
                 </div>
               </div>

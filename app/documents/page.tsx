@@ -32,7 +32,7 @@ export default function DocumentsPage() {
     <PageWrapper>
       <div className="px-4 md:px-12 pb-12 max-w-6xl mx-auto w-full flex gap-6">
         {/* File list */}
-        <div className={`flex flex-col gap-4 transition-all ${selectedFile ? 'w-72 shrink-0' : 'flex-1'}`}>
+        <div className={`flex flex-col gap-4 transition-all ${selectedFile ? 'hidden md:flex md:w-72 md:shrink-0' : 'flex-1'}`}>
           {/* Search */}
           <div className="relative">
             <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-proji-secondary" />
@@ -83,12 +83,18 @@ export default function DocumentsPage() {
               className="flex-1 bg-white rounded-3xl border border-proji-border overflow-hidden flex flex-col"
             >
               {/* Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-proji-border">
-                <div>
-                  <p className="text-sm font-black text-proji-dark">{selectedFile.name}</p>
+              <div className="flex items-center justify-between px-4 md:px-6 py-4 border-b border-proji-border gap-2">
+                <button
+                  onClick={closeFile}
+                  className="md:hidden flex items-center gap-1 text-xs font-bold text-proji-primary shrink-0"
+                >
+                  <ChevronLeft size={14} /> Назад
+                </button>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-black text-proji-dark truncate">{selectedFile.name}</p>
                   <p className="text-xs text-proji-secondary">{selectedFile.author} · {selectedFile.date}</p>
                 </div>
-                <button onClick={closeFile} className="p-2 rounded-xl text-proji-secondary hover:text-proji-dark hover:bg-slate-100 transition-colors">
+                <button onClick={closeFile} className="hidden md:flex p-2 rounded-xl text-proji-secondary hover:text-proji-dark hover:bg-slate-100 transition-colors">
                   <X size={16} />
                 </button>
               </div>

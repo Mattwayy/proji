@@ -43,17 +43,17 @@ const channels = [
 export default function Page() {
   return (
     <PageWrapper>
-      <div className="px-6 pb-8 space-y-6">
+      <div className="px-4 md:px-6 pb-8 space-y-6">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
-          className="flex items-center justify-between">
+          className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800">Аналитика</h1>
+            <h1 className="text-xl md:text-2xl font-bold text-slate-800">Аналитика</h1>
             <p className="text-slate-500 text-sm mt-0.5">Декабрь 2024 · Обновлено только что</p>
           </div>
           <div className="flex gap-2">
             {['7д', '30д', '90д', 'Год'].map((p, i) => (
-              <button key={p} className={`px-3 py-1.5 text-sm rounded-lg font-medium transition-colors ${
+              <button key={p} className={`px-2.5 md:px-3 py-1.5 text-xs md:text-sm rounded-lg font-medium transition-colors ${
                 i === 3 ? 'bg-blue-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
               }`}>{p}</button>
             ))}

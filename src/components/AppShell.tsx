@@ -9,6 +9,7 @@ import { AIBadge } from './AIBadge';
 import { ContextSidebar } from './ContextSidebar';
 import { QuickAddModal } from './QuickAddModal';
 import { TaskCreateModal } from './TaskCreateModal';
+import { EntityFactory } from './EntityFactory';
 import { useAppStore } from '../store/useAppStore';
 
 const AUTH_ROUTES = ['/login'];
@@ -38,6 +39,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <ContextSidebar />
       <QuickAddModal />
       <TaskCreateModal />
+      <EntityFactory />
     </div>
   );
 }

@@ -66,13 +66,13 @@ function EmployerProfileEditor({ email }: { email: string }) {
   ];
 
   return (
-    <div className="max-w-lg">
+    <div className="max-w-lg w-full">
       <div className="mb-4">
         <h2 className="text-sm font-black text-slate-800 uppercase tracking-widest">Профиль</h2>
         <p className="text-xs text-slate-400 mt-0.5">Редактирование данных аккаунта</p>
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
+      <div className="bg-white rounded-2xl border border-slate-200 p-4 md:p-6 space-y-4">
         {fields.map((f) => (
           <div key={f.key} className="space-y-1.5">
             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1">
@@ -312,18 +312,18 @@ export default function CabinetPage() {
 
   return (
     <PageWrapper>
-      <div className="max-w-5xl mx-auto px-6 pb-12 w-full">
+      <div className="max-w-5xl mx-auto px-4 md:px-6 pb-12 w-full">
         {/* Manager card */}
-        <div className="bg-white rounded-2xl border border-slate-200 px-6 py-5 mb-6 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-proji-primary/10 flex items-center justify-center shrink-0">
+        <div className="bg-white rounded-2xl border border-slate-200 px-4 md:px-6 py-4 md:py-5 mb-6 flex flex-wrap items-center gap-3 md:gap-4">
+          <div className="w-11 h-11 md:w-12 md:h-12 rounded-2xl bg-proji-primary/10 flex items-center justify-center shrink-0">
             <User size={20} className="text-proji-primary" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-base font-black text-slate-800">{session?.user?.name ?? 'Управленец'}</p>
-            <p className="text-xs text-slate-400">{session?.user?.email}</p>
+            <p className="text-base font-black text-slate-800 truncate">{session?.user?.name ?? 'Управленец'}</p>
+            <p className="text-xs text-slate-400 truncate">{session?.user?.email}</p>
           </div>
-          <div className="flex items-center gap-2">
-            <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full ${
+          <div className="flex items-center gap-2 ml-auto">
+            <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1.5 rounded-full whitespace-nowrap ${
               isManager
                 ? 'text-proji-primary bg-proji-primary/10'
                 : 'text-amber-600 bg-amber-50'
@@ -332,9 +332,9 @@ export default function CabinetPage() {
             </span>
             <button
               onClick={() => signOut({ callbackUrl: '/login' })}
-              className="flex items-center gap-1.5 text-xs font-bold text-slate-400 hover:text-red-500 transition-colors px-3 py-1.5 rounded-xl hover:bg-red-50 border border-transparent hover:border-red-100"
+              className="flex items-center gap-1.5 text-xs font-bold text-slate-400 hover:text-red-500 transition-colors px-2.5 md:px-3 py-1.5 rounded-xl hover:bg-red-50 border border-transparent hover:border-red-100 whitespace-nowrap"
             >
-              <LogOut size={13} /> Выйти
+              <LogOut size={13} /> <span className="hidden sm:inline">Выйти</span>
             </button>
           </div>
         </div>
