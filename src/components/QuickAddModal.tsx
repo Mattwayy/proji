@@ -66,7 +66,10 @@ export function QuickAddModal() {
           id: Date.now().toString(),
           title: quickAddText.trim(),
           status: 'pending',
+          priority: 'medium',
+          checklist: [],
           relatedToType: 'Общий',
+          createdAt: Date.now(),
         }]);
       }
     }

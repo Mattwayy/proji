@@ -195,11 +195,11 @@ export const useAppStore = create<AppStore>((set) => ({
 
   // Tasks
   allTasks: [
-    { id: '1', title: 'Отчет по маркетингу', status: 'pending', relatedToType: 'Проект', relatedToName: 'Marketing Q2' },
-    { id: '2', title: 'Встреча: Strategy Sync', status: 'completed', relatedToType: 'Общий' },
-    { id: 'journal-1', title: 'Доработать договор аренды', status: 'pending', relatedToType: 'Юридический', relatedToName: 'Аренда Офиса' },
-    { id: 'journal-2', title: 'Подготовить форму отчетности KPI', status: 'pending', relatedToType: 'Документ', relatedToName: 'KPI Template' },
-    { id: 'journal-3', title: 'Запустить TikTok креативы', status: 'pending', relatedToType: 'Проект', relatedToName: 'Gen Z Campaign' },
+    { id: '1', title: 'Отчет по маркетингу', description: 'Собрать данные за Q2 и оформить слайды', status: 'pending', priority: 'high', dueDate: '2026-06-20', assignee: 'Мария С.', checklist: [{ text: 'Собрать данные', done: true }, { text: 'Оформить слайды', done: false }], relatedToType: 'Проект', relatedToName: 'Marketing Q2', tags: ['маркетинг'], createdAt: Date.now() - 86400000 * 3 },
+    { id: '2', title: 'Встреча: Strategy Sync', description: '', status: 'completed', priority: 'medium', dueDate: '2026-06-10', assignee: '', checklist: [], relatedToType: 'Общий', tags: [], createdAt: Date.now() - 86400000 * 5 },
+    { id: 'journal-1', title: 'Доработать договор аренды', description: '', status: 'pending', priority: 'high', dueDate: '2026-06-15', assignee: '', checklist: [], relatedToType: 'Юридический', relatedToName: 'Аренда Офиса', tags: ['юридический'], createdAt: Date.now() - 86400000 * 2 },
+    { id: 'journal-2', title: 'Подготовить форму отчетности KPI', description: '', status: 'pending', priority: 'medium', dueDate: '', assignee: 'Иван П.', checklist: [{ text: 'Согласовать шаблон', done: false }], relatedToType: 'Документ', relatedToName: 'KPI Template', tags: [], createdAt: Date.now() - 86400000 },
+    { id: 'journal-3', title: 'Запустить TikTok креативы', description: 'A/B тест двух концепций', status: 'pending', priority: 'low', dueDate: '2026-06-30', assignee: 'Алексей К.', checklist: [], relatedToType: 'Проект', relatedToName: 'Gen Z Campaign', tags: ['маркетинг', 'smm'], createdAt: Date.now() },
   ],
   setAllTasks: (tasks) => set((s) => ({ allTasks: typeof tasks === 'function' ? tasks(s.allTasks) : tasks })),
   selectedTask: null,

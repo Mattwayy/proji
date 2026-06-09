@@ -23,11 +23,11 @@ import { TQMDashboardView, ContinuousImprovementView, QualityAuditsView, Custome
 
 export default function App() {
   const [allTasks, setAllTasks] = useState<Task[]>([
-    { id: '1', title: 'Отчет по маркетингу', status: 'pending', relatedToType: 'Проект', relatedToName: 'Marketing Q2' },
-    { id: '2', title: 'Встреча: Strategy Sync', status: 'completed', relatedToType: 'Общий' },
-    { id: 'journal-1', title: 'Доработать договор аренды', status: 'pending', relatedToType: 'Юридический', relatedToName: 'Аренда Офиса' },
-    { id: 'journal-2', title: 'Подготовить форму отчетности KPI', status: 'pending', relatedToType: 'Документ', relatedToName: 'KPI Template' },
-    { id: 'journal-3', title: 'Запустить TikTok креативы', status: 'pending', relatedToType: 'Проект', relatedToName: 'Gen Z Campaign' },
+    { id: '1', title: 'Отчет по маркетингу', status: 'pending', priority: 'high', checklist: [], relatedToType: 'Проект', relatedToName: 'Marketing Q2', createdAt: Date.now() },
+    { id: '2', title: 'Встреча: Strategy Sync', status: 'completed', priority: 'medium', checklist: [], relatedToType: 'Общий', createdAt: Date.now() },
+    { id: 'journal-1', title: 'Доработать договор аренды', status: 'pending', priority: 'high', checklist: [], relatedToType: 'Юридический', relatedToName: 'Аренда Офиса', createdAt: Date.now() },
+    { id: 'journal-2', title: 'Подготовить форму отчетности KPI', status: 'pending', priority: 'medium', checklist: [], relatedToType: 'Документ', relatedToName: 'KPI Template', createdAt: Date.now() },
+    { id: 'journal-3', title: 'Запустить TikTok креативы', status: 'pending', priority: 'low', checklist: [], relatedToType: 'Проект', relatedToName: 'Gen Z Campaign', createdAt: Date.now() },
   ]);
 
   const activeTasks = allTasks.filter(t => t.status === 'pending');
@@ -544,7 +544,10 @@ export default function App() {
       id: Date.now().toString(),
       title: title || 'Новая задача',
       status: 'pending',
-      tags: tags
+      priority: 'medium',
+      checklist: [],
+      tags: tags,
+      createdAt: Date.now(),
     };
     setAllTasks(prev => [...prev, newTask]);
     alert(`Создана задача: ${newTask.title}`);
@@ -572,7 +575,10 @@ export default function App() {
         id: `ext-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
         title: match[1],
         status: 'pending',
-        tags: ['Из документа', currentDomain]
+        priority: 'medium',
+        checklist: [],
+        tags: ['Из документа', currentDomain],
+        createdAt: Date.now(),
       });
     }
 
@@ -791,12 +797,15 @@ export default function App() {
           // Check if task already exists by ID
           const taskExists = prevTasks.some(t => t.id === `buy-${eq.id}`);
           if (!taskExists) {
-            newTasksToAdd.push({ 
-              id: `buy-${eq.id}`, 
-              title: `Закуп: ${eq.name} (Запчасти)`, 
-              status: 'pending', 
+            newTasksToAdd.push({
+              id: `buy-${eq.id}`,
+              title: `Закуп: ${eq.name} (Запчасти)`,
+              status: 'pending',
+              priority: 'high',
+              checklist: [],
               relatedToType: 'Оборудование',
-              relatedToName: eq.name 
+              relatedToName: eq.name,
+              createdAt: Date.now(),
             });
           }
         }

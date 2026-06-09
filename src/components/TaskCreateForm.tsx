@@ -17,6 +17,7 @@ interface Props {
   onSave: (data: TaskFormData) => void;
   onCancel?: () => void;
   submitLabel?: string;
+  initialData?: Partial<TaskFormData>;
 }
 
 const PRIORITY_LABEL: Record<Priority, string> = { low: 'Низкий', medium: 'Средний', high: 'Высокий' };
@@ -33,13 +34,13 @@ function getNextFriday() {
   return d.toISOString().slice(0, 10);
 }
 
-export function TaskCreateForm({ onSave, onCancel, submitLabel = 'Добавить задачу' }: Props) {
-  const [title, setTitle]               = useState('');
-  const [description, setDescription]   = useState('');
-  const [priority, setPriority]         = useState<Priority>('medium');
-  const [dueDate, setDueDate]           = useState('');
-  const [assignee, setAssignee]         = useState('');
-  const [checklist, setChecklist]       = useState<string[]>([]);
+export function TaskCreateForm({ onSave, onCancel, submitLabel = 'Добавить задачу', initialData }: Props) {
+  const [title, setTitle]               = useState(initialData?.title ?? '');
+  const [description, setDescription]   = useState(initialData?.description ?? '');
+  const [priority, setPriority]         = useState<Priority>(initialData?.priority ?? 'medium');
+  const [dueDate, setDueDate]           = useState(initialData?.dueDate ?? '');
+  const [assignee, setAssignee]         = useState(initialData?.assignee ?? '');
+  const [checklist, setChecklist]       = useState<string[]>(initialData?.checklist ?? []);
   const [checkInput, setCheckInput]     = useState('');
   const [attempted, setAttempted]       = useState(false);
 

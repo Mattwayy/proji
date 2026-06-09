@@ -13,10 +13,17 @@ export function TaskCreateModal() {
 
   const handleSave = (data: TaskFormData) => {
     setAllTasks([...allTasks, {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       title: data.title,
+      description: data.description,
       status: 'pending',
+      priority: data.priority,
+      dueDate: data.dueDate || undefined,
+      assignee: data.assignee || undefined,
+      checklist: data.checklist.map((text) => ({ text, done: false })),
       relatedToType: 'Общий',
+      tags: [],
+      createdAt: Date.now(),
     }]);
     setShowTaskCreateModal(false);
   };

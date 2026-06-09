@@ -85,10 +85,16 @@ export interface Message {
 export interface Task {
   id: string;
   title: string;
+  description?: string;
   status: 'pending' | 'completed' | 'cancelled';
+  priority: 'low' | 'medium' | 'high';
+  dueDate?: string;
+  assignee?: string;
+  checklist: { text: string; done: boolean }[];
   relatedToType?: 'Оборудование' | 'Проект' | 'Клиент' | 'Юридический' | 'Документ' | 'Общий';
   relatedToName?: string;
   tags?: string[];
+  createdAt: number;
 }
 
 export interface Project {

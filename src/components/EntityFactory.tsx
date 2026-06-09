@@ -170,7 +170,7 @@ export function EntityFactory() {
     setPhase('confirmed');
     setExpandedBin('task');
     const newTasks = items.filter((i) => i.type === 'task').map((i) => ({
-      id: `ef-${Date.now()}-${i.id}`, title: i.text, status: 'pending' as const, relatedToType: 'Общий' as const,
+      id: `ef-${Date.now()}-${i.id}`, title: i.text, status: 'pending' as const, priority: 'medium' as const, checklist: [] as { text: string; done: boolean }[], relatedToType: 'Общий' as const, createdAt: Date.now(),
     }));
     if (newTasks.length) setAllTasks((prev) => [...prev, ...newTasks]);
   };

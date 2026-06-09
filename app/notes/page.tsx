@@ -1,32 +1,42 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Plus, Trash2, Save, X, StickyNote, Search, Palette } from 'lucide-react';
+import { Plus, Trash2, Save, X, StickyNote, Search, Palette, Pin, PinOff, Tag } from 'lucide-react';
 
 type Note = {
   id: string;
   title: string;
   body: string;
   color: string;
+  pinned: boolean;
+  tags: string[];
   createdAt: number;
   updatedAt: number;
 };
 
 const COLORS = [
-  { bg: 'bg-white', border: 'border-slate-200', label: 'white' },
-  { bg: 'bg-yellow-50', border: 'border-yellow-200', label: 'yellow' },
-  { bg: 'bg-blue-50', border: 'border-blue-200', label: 'blue' },
-  { bg: 'bg-green-50', border: 'border-green-200', label: 'green' },
-  { bg: 'bg-pink-50', border: 'border-pink-200', label: 'pink' },
-  { bg: 'bg-purple-50', border: 'border-purple-200', label: 'purple' },
-  { bg: 'bg-orange-50', border: 'border-orange-200', label: 'orange' },
+  { bg: 'bg-white',       border: 'border-slate-200',  label: 'white'  },
+  { bg: 'bg-yellow-50',   border: 'border-yellow-200', label: 'yellow' },
+  { bg: 'bg-blue-50',     border: 'border-blue-200',   label: 'blue'   },
+  { bg: 'bg-green-50',    border: 'border-green-200',  label: 'green'  },
+  { bg: 'bg-pink-50',     border: 'border-pink-200',   label: 'pink'   },
+  { bg: 'bg-purple-50',   border: 'border-purple-200', label: 'purple' },
+  { bg: 'bg-orange-50',   border: 'border-orange-200', label: 'orange' },
 ];
 
-const STORAGE_KEY = 'proji_notes';
+const STORAGE_KEY = 'proji_notes_v2';
 
 function load(): Note[] {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]');
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+    // migrate from v1
+    const old = localStorage.getItem('proji_notes');
+    if (old) {
+      const v1 = JSON.parse(old) as Omit<Note, 'pinned' | 'tags'>[];
+      return v1.map((n) => ({ ...n, pinned: false, tags: [] }));
+    }
+    return [];
   } catch {
     return [];
   }
@@ -37,20 +47,23 @@ function save(notes: Note[]) {
 }
 
 function fmt(ts: number) {
-  const d = new Date(ts);
-  return d.toLocaleDateString('ru-RU', { day: '2-digit', month: 'short', year: 'numeric' });
+  return new Date(ts).toLocaleDateString('ru-RU', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+function colorMeta(label: string) {
+  return COLORS.find((c) => c.label === label) ?? COLORS[0];
 }
 
 export default function NotesPage() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [editing, setEditing] = useState<Note | null>(null);
   const [search, setSearch] = useState('');
+  const [activeTag, setActiveTag] = useState<string | null>(null);
   const [showColorPicker, setShowColorPicker] = useState(false);
+  const [tagInput, setTagInput] = useState('');
   const bodyRef = useRef<HTMLTextAreaElement>(null);
 
-  useEffect(() => {
-    setNotes(load());
-  }, []);
+  useEffect(() => { setNotes(load()); }, []);
 
   const persist = (updated: Note[]) => {
     setNotes(updated);
@@ -63,10 +76,13 @@ export default function NotesPage() {
       title: '',
       body: '',
       color: 'white',
+      pinned: false,
+      tags: [],
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
     setEditing(note);
+    setTagInput('');
   };
 
   const saveNote = () => {
@@ -75,8 +91,7 @@ export default function NotesPage() {
       setEditing(null);
       return;
     }
-    const updated = editing;
-    updated.updatedAt = Date.now();
+    const updated = { ...editing, updatedAt: Date.now() };
     const idx = notes.findIndex((n) => n.id === editing.id);
     if (idx >= 0) {
       const list = [...notes];
@@ -93,24 +108,53 @@ export default function NotesPage() {
     if (editing?.id === id) setEditing(null);
   };
 
-  const colorMeta = (label: string) => COLORS.find((c) => c.label === label) ?? COLORS[0];
+  const togglePin = (id: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    const updated = notes.map((n) => n.id === id ? { ...n, pinned: !n.pinned } : n);
+    persist(updated);
+    if (editing?.id === id) setEditing((prev) => prev ? { ...prev, pinned: !prev.pinned } : prev);
+  };
 
-  const filtered = notes.filter(
-    (n) =>
-      n.title.toLowerCase().includes(search.toLowerCase()) ||
-      n.body.toLowerCase().includes(search.toLowerCase()),
-  );
+  const addTag = () => {
+    const tag = tagInput.trim().toLowerCase().replace(/\s+/g, '-');
+    if (!tag || !editing || editing.tags.includes(tag)) { setTagInput(''); return; }
+    setEditing((n) => n ? { ...n, tags: [...n.tags, tag] } : n);
+    setTagInput('');
+  };
+
+  const removeTag = (tag: string) => {
+    setEditing((n) => n ? { ...n, tags: n.tags.filter((t) => t !== tag) } : n);
+  };
+
+  // all unique tags across notes
+  const allTags = Array.from(new Set(notes.flatMap((n) => n.tags)));
+
+  const filtered = notes
+    .filter((n) => {
+      const q = search.toLowerCase();
+      const matchSearch = !q || n.title.toLowerCase().includes(q) || n.body.toLowerCase().includes(q);
+      const matchTag = !activeTag || n.tags.includes(activeTag);
+      return matchSearch && matchTag;
+    })
+    .sort((a, b) => {
+      if (a.pinned && !b.pinned) return -1;
+      if (!a.pinned && b.pinned) return 1;
+      return b.updatedAt - a.updatedAt;
+    });
+
+  const pinned = filtered.filter((n) => n.pinned);
+  const unpinned = filtered.filter((n) => !n.pinned);
 
   return (
     <div className="flex h-full bg-[#f5f7fc]">
-      {/* Left: grid */}
+      {/* ── Left: grid ── */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Header */}
-        <div className="flex items-center gap-2 md:gap-3 px-4 md:px-6 pt-4 md:pt-6 pb-3 md:pb-4 border-b border-slate-200 bg-white shrink-0">
+        <div className="flex items-center gap-2 md:gap-3 px-4 md:px-6 pt-4 md:pt-6 pb-3 border-b border-slate-200 bg-white shrink-0">
           <StickyNote size={18} className="text-slate-400 shrink-0" />
           <h1 className="text-base md:text-lg font-black text-slate-800 tracking-tight">Заметки</h1>
           <span className="text-xs text-slate-400 font-medium">{notes.length}</span>
-          <div className="relative ml-auto flex-1 max-w-[160px] md:max-w-[208px]">
+          <div className="relative ml-auto flex-1 max-w-[160px] md:max-w-[200px]">
             <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               value={search}
@@ -127,6 +171,28 @@ export default function NotesPage() {
           </button>
         </div>
 
+        {/* Tags filter */}
+        {allTags.length > 0 && (
+          <div className="flex items-center gap-2 px-4 md:px-6 py-2 bg-white border-b border-slate-100 overflow-x-auto shrink-0">
+            <Tag size={12} className="text-slate-400 shrink-0" />
+            <button
+              onClick={() => setActiveTag(null)}
+              className={`shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-lg transition-colors ${!activeTag ? 'bg-slate-800 text-white' : 'text-slate-500 hover:bg-slate-100'}`}
+            >
+              Все
+            </button>
+            {allTags.map((tag) => (
+              <button
+                key={tag}
+                onClick={() => setActiveTag(activeTag === tag ? null : tag)}
+                className={`shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-lg transition-colors ${activeTag === tag ? 'bg-proji-primary text-white' : 'text-slate-500 hover:bg-slate-100'}`}
+              >
+                #{tag}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Grid */}
         <div className="flex-1 overflow-y-auto p-4 md:p-6">
           {filtered.length === 0 ? (
@@ -134,52 +200,46 @@ export default function NotesPage() {
               <StickyNote size={40} strokeWidth={1.5} />
               <p className="text-sm font-medium">{search ? 'Ничего не найдено' : 'Нет заметок'}</p>
               {!search && (
-                <button
-                  onClick={createNote}
-                  className="text-xs text-slate-600 underline underline-offset-2 hover:text-slate-800"
-                >
+                <button onClick={createNote} className="text-xs text-slate-600 underline underline-offset-2 hover:text-slate-800">
                   Создать первую заметку
                 </button>
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              <AnimatePresence>
-                {filtered.map((note) => {
-                  const cm = colorMeta(note.color);
-                  return (
-                    <motion.div
-                      key={note.id}
-                      layout
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      onClick={() => setEditing({ ...note })}
-                      className={`group relative cursor-pointer rounded-2xl border p-4 shadow-sm hover:shadow-md transition-all ${cm.bg} ${cm.border}`}
-                    >
-                      {note.title && (
-                        <p className="text-sm font-bold text-slate-800 mb-1 line-clamp-1">{note.title}</p>
-                      )}
-                      {note.body && (
-                        <p className="text-xs text-slate-500 line-clamp-4 leading-relaxed">{note.body}</p>
-                      )}
-                      <p className="text-[10px] text-slate-400 mt-3">{fmt(note.updatedAt)}</p>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); deleteNote(note.id); }}
-                        className="absolute top-2 right-2 md:opacity-0 md:group-hover:opacity-100 p-1.5 rounded-lg bg-white/80 text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all"
-                      >
-                        <Trash2 size={12} />
-                      </button>
-                    </motion.div>
-                  );
-                })}
-              </AnimatePresence>
-            </div>
+            <>
+              {/* Pinned section */}
+              {pinned.length > 0 && (
+                <div className="mb-5">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5">
+                    <Pin size={10} /> Закреплено
+                  </p>
+                  <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                    <AnimatePresence>
+                      {pinned.map((note) => <NoteCard key={note.id} note={note} onOpen={() => { setEditing({ ...note }); setTagInput(''); }} onDelete={deleteNote} onTogglePin={togglePin} />)}
+                    </AnimatePresence>
+                  </div>
+                </div>
+              )}
+
+              {/* Other notes */}
+              {unpinned.length > 0 && (
+                <div>
+                  {pinned.length > 0 && (
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Остальные</p>
+                  )}
+                  <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                    <AnimatePresence>
+                      {unpinned.map((note) => <NoteCard key={note.id} note={note} onOpen={() => { setEditing({ ...note }); setTagInput(''); }} onDelete={deleteNote} onTogglePin={togglePin} />)}
+                    </AnimatePresence>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
 
-      {/* Right: editor panel */}
+      {/* ── Right: editor panel ── */}
       <AnimatePresence>
         {editing && (
           <motion.div
@@ -195,6 +255,15 @@ export default function NotesPage() {
                 {notes.find((n) => n.id === editing.id) ? 'Редактировать' : 'Новая заметка'}
               </span>
               <div className="ml-auto flex items-center gap-1">
+                {/* Pin toggle */}
+                <button
+                  onClick={() => setEditing((n) => n ? { ...n, pinned: !n.pinned } : n)}
+                  className={`p-1.5 rounded-lg transition-colors ${editing.pinned ? 'text-proji-primary bg-proji-primary/10' : 'text-slate-400 hover:text-slate-700 hover:bg-white/70'}`}
+                  title={editing.pinned ? 'Открепить' : 'Закрепить'}
+                >
+                  {editing.pinned ? <PinOff size={14} /> : <Pin size={14} />}
+                </button>
+
                 {/* Color picker */}
                 <div className="relative">
                   <button
@@ -223,6 +292,7 @@ export default function NotesPage() {
                     )}
                   </AnimatePresence>
                 </div>
+
                 <button
                   onClick={saveNote}
                   className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 text-white text-xs font-bold rounded-lg hover:bg-slate-700 transition-colors"
@@ -243,7 +313,7 @@ export default function NotesPage() {
               value={editing.title}
               onChange={(e) => setEditing((n) => n ? { ...n, title: e.target.value } : n)}
               placeholder="Заголовок"
-              className="px-5 pt-4 pb-2 text-base font-bold text-slate-800 bg-transparent outline-none placeholder:text-slate-400 border-none"
+              className="px-5 pt-4 pb-2 text-base font-bold text-slate-800 bg-transparent outline-none placeholder:text-slate-400"
               onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); bodyRef.current?.focus(); } }}
             />
 
@@ -253,19 +323,51 @@ export default function NotesPage() {
               value={editing.body}
               onChange={(e) => setEditing((n) => n ? { ...n, body: e.target.value } : n)}
               placeholder="Начните писать..."
-              className="flex-1 px-5 py-2 text-sm text-slate-600 bg-transparent outline-none placeholder:text-slate-400 resize-none leading-relaxed border-none"
+              className="flex-1 px-5 py-2 text-sm text-slate-600 bg-transparent outline-none placeholder:text-slate-400 resize-none leading-relaxed"
               onKeyDown={(e) => {
                 if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); saveNote(); }
               }}
             />
 
+            {/* Tags section */}
+            <div className="px-5 py-3 border-t border-slate-200/70 shrink-0">
+              {editing.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mb-2">
+                  {editing.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="flex items-center gap-1 text-[11px] font-bold text-proji-primary/80 bg-proji-primary/8 border border-proji-primary/20 px-2 py-0.5 rounded-lg"
+                    >
+                      #{tag}
+                      <button onClick={() => removeTag(tag)} className="text-proji-primary/50 hover:text-red-500 transition-colors">
+                        <X size={10} />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+              <div className="flex items-center gap-1.5">
+                <Tag size={12} className="text-slate-400 shrink-0" />
+                <input
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && addTag()}
+                  placeholder="Добавить тег..."
+                  className="flex-1 text-xs bg-transparent outline-none text-slate-600 placeholder:text-slate-400"
+                />
+                {tagInput && (
+                  <button onClick={addTag} className="text-[11px] text-proji-primary font-bold shrink-0">
+                    + Добавить
+                  </button>
+                )}
+              </div>
+            </div>
+
             {/* Footer */}
             <div className="px-5 py-3 border-t border-slate-200/70 flex items-center justify-between shrink-0">
               {editing.createdAt ? (
                 <span className="text-[10px] text-slate-400">Создано {fmt(editing.createdAt)}</span>
-              ) : (
-                <span />
-              )}
+              ) : <span />}
               {notes.find((n) => n.id === editing.id) && (
                 <button
                   onClick={() => deleteNote(editing.id)}
@@ -279,5 +381,71 @@ export default function NotesPage() {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+// ── Note Card ─────────────────────────────────────────────────────────────────
+
+function NoteCard({
+  note,
+  onOpen,
+  onDelete,
+  onTogglePin,
+}: {
+  note: Note;
+  onOpen: () => void;
+  onDelete: (id: string) => void;
+  onTogglePin: (id: string, e?: React.MouseEvent) => void;
+}) {
+  const cm = colorMeta(note.color);
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      onClick={onOpen}
+      className={`group relative cursor-pointer rounded-2xl border p-4 shadow-sm hover:shadow-md transition-all ${cm.bg} ${cm.border}`}
+    >
+      {note.title && (
+        <p className="text-sm font-bold text-slate-800 mb-1 line-clamp-1">{note.title}</p>
+      )}
+      {note.body && (
+        <p className="text-xs text-slate-500 line-clamp-4 leading-relaxed">{note.body}</p>
+      )}
+
+      {/* tags */}
+      {note.tags.length > 0 && (
+        <div className="flex flex-wrap gap-1 mt-2">
+          {note.tags.slice(0, 3).map((tag) => (
+            <span key={tag} className="text-[10px] text-proji-primary/70 bg-proji-primary/5 px-1.5 py-0.5 rounded-md">
+              #{tag}
+            </span>
+          ))}
+        </div>
+      )}
+
+      <p className="text-[10px] text-slate-400 mt-2">{fmt(note.updatedAt)}</p>
+
+      {/* pin button */}
+      <button
+        onClick={(e) => onTogglePin(note.id, e)}
+        className={`absolute top-2 left-2 p-1.5 rounded-lg transition-all ${
+          note.pinned
+            ? 'text-proji-primary bg-proji-primary/10 opacity-100'
+            : 'md:opacity-0 md:group-hover:opacity-100 bg-white/80 text-slate-400 hover:text-proji-primary'
+        }`}
+      >
+        <Pin size={11} />
+      </button>
+
+      {/* delete button */}
+      <button
+        onClick={(e) => { e.stopPropagation(); onDelete(note.id); }}
+        className="absolute top-2 right-2 md:opacity-0 md:group-hover:opacity-100 p-1.5 rounded-lg bg-white/80 text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all"
+      >
+        <Trash2 size={12} />
+      </button>
+    </motion.div>
   );
 }
