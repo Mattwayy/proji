@@ -19,6 +19,8 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET ?? 'proji-dev-secret-change-in-prod',
   session: { strategy: 'jwt', maxAge: 8 * 60 * 60 },
   pages: { signIn: '/login' },
+  // Required for next-auth v4 compatibility with Next.js 15+
+  trustHost: true,
 
   providers: [
     CredentialsProvider({

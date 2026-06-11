@@ -90,7 +90,7 @@ export default function BoardPage() {
     <PageWrapper>
       <div className="flex flex-col h-full overflow-hidden">
         {/* Header bar */}
-        <div className="flex items-center justify-between px-6 py-3 shrink-0">
+        <div className="flex items-center justify-between px-4 md:px-6 py-3 shrink-0">
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
             Выбранный проект
           </p>
@@ -246,9 +246,9 @@ export default function BoardPage() {
                 key="gantt"
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               >
-                <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+                <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden overflow-x-auto">
                   {/* Gantt header */}
-                  <div className="grid border-b border-slate-100" style={{ gridTemplateColumns: '200px repeat(8, 1fr)' }}>
+                  <div className="grid border-b border-slate-100 min-w-[640px]" style={{ gridTemplateColumns: '200px repeat(8, 1fr)' }}>
                     <div className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-400 border-r border-slate-100">Задача</div>
                     {['Нед 1', 'Нед 2', 'Нед 3', 'Нед 4', 'Нед 5', 'Нед 6', 'Нед 7', 'Нед 8'].map((w) => (
                       <div key={w} className="px-2 py-3 text-[10px] font-bold text-slate-400 text-center border-r border-slate-100 last:border-0">{w}</div>
@@ -258,7 +258,7 @@ export default function BoardPage() {
                     const start = i % 4;
                     const duration = 2 + (i % 3);
                     return (
-                      <div key={task.id} className="grid border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors" style={{ gridTemplateColumns: '200px repeat(8, 1fr)' }}>
+                      <div key={task.id} className="grid border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors min-w-[640px]" style={{ gridTemplateColumns: '200px repeat(8, 1fr)' }}>
                         <div className="px-4 py-3 border-r border-slate-100">
                           <p className="text-xs font-semibold text-slate-800 truncate">{task.title}</p>
                           <p className="text-[10px] text-slate-400">{task.assignee}</p>

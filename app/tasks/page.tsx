@@ -145,7 +145,7 @@ function TaskCard({
 
       <button
         onClick={(e) => { e.stopPropagation(); onDelete(); }}
-        className="shrink-0 md:opacity-0 md:group-hover:opacity-100 p-1 rounded-lg text-slate-300 hover:text-red-400 hover:bg-red-50 transition-all mt-0.5"
+        className="shrink-0 md:opacity-0 md:group-hover:opacity-100 p-2 rounded-lg text-slate-300 hover:text-red-400 hover:bg-red-50 transition-all mt-0.5"
       >
         <X size={14} />
       </button>
@@ -431,7 +431,7 @@ export default function TasksPage() {
         {/* ── Left: list ── */}
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
           {/* Stats bar */}
-          <div className="grid grid-cols-4 gap-2 px-4 md:px-8 pt-4 md:pt-6 shrink-0">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 px-4 md:px-8 pt-4 md:pt-6 shrink-0">
             {[
               { label: 'Всего', value: counts.all, color: 'text-slate-700' },
               { label: 'В работе', value: counts.pending, color: 'text-blue-500' },

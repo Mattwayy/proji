@@ -26,6 +26,7 @@ const ROUTE_MAP: Record<string, string> = {
   'Оплата': '/payment',
   'Сообщения': '/messages',
   'Обсуждения': '/discussions',
+  'Журнал сообщений': '/messages/journal',
   'Проекты': '/projects',
   'Дерево целей': '/goals-tree',
   'Управление проектом': '/projects/manage',
@@ -134,6 +135,7 @@ const BASE_ITEMS: NavItem[] = [
   { icon: Mail, label: 'Сообщения', href: '/messages', details: [
     { label: 'Сообщения', icon: Mail },
     { label: 'Обсуждения', icon: MessageSquare },
+    { label: 'Журнал сообщений', icon: BookOpen },
   ]},
   { icon: Folder, label: 'Проекты', href: '/projects', details: [
     { label: 'Создать новый', icon: Plus, isAction: true },

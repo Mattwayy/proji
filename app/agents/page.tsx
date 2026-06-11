@@ -200,7 +200,7 @@ export default function AgentsPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.07 }}
                 onClick={() => handleCardClick(agent)}
-                style={{ height: '70vh', minHeight: 480, maxHeight: '70vh' }}
+                style={{ height: 'clamp(320px, 70vh, 70vh)' }}
                 className={`relative flex flex-col rounded-3xl border shadow-sm transition-all overflow-hidden
                   ${agent.soon
                     ? 'bg-slate-100 border-slate-200 opacity-60 cursor-not-allowed'
