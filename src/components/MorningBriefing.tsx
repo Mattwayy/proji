@@ -67,7 +67,7 @@ export function MorningBriefing() {
                   <Sun size={20} />
                 </div>
                 <div>
-                  <h2 className="text-lg font-black text-slate-900">Утренний брифинг</h2>
+                  <h2 className="text-lg font-black text-slate-900">Сводка дня</h2>
                   <p className="text-xs text-slate-400 font-medium mt-0.5">Доброе утро! Сегодня {formatToday()}.</p>
                 </div>
               </div>
