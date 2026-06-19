@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Sun, X, AlertTriangle, ArrowRight, Target, BookOpen, Clock } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 
-const STORAGE_KEY = 'proji_briefing_last_shown';
 const AUTH_ROUTES = ['/login'];
 
 function formatToday() {
@@ -17,16 +16,16 @@ export function MorningBriefing() {
   const pathname = usePathname();
   const { allTasks, projects } = useAppStore();
   const [open, setOpen] = useState(false);
+  const [shown, setShown] = useState(false);
 
   useEffect(() => {
     if (AUTH_ROUTES.some((r) => pathname.startsWith(r))) return;
-    const today = new Date().toDateString();
-    const lastShown = localStorage.getItem(STORAGE_KEY);
-    if (lastShown !== today) setOpen(true);
-  }, [pathname]);
+    if (shown) return;
+    setOpen(true);
+    setShown(true);
+  }, [pathname, shown]);
 
   const dismiss = () => {
-    localStorage.setItem(STORAGE_KEY, new Date().toDateString());
     setOpen(false);
   };
 
