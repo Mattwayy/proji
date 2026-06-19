@@ -10,6 +10,7 @@ import { ContextSidebar } from './ContextSidebar';
 import { QuickAddModal } from './QuickAddModal';
 import { TaskCreateModal } from './TaskCreateModal';
 import { EntityFactory } from './EntityFactory';
+import { MorningBriefing } from './MorningBriefing';
 import { useAppStore } from '../store/useAppStore';
 
 const AUTH_ROUTES = ['/login'];
@@ -40,6 +41,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <QuickAddModal />
       <TaskCreateModal />
       <EntityFactory />
+      <MorningBriefing />
     </div>
   );
 }

@@ -15,7 +15,7 @@ import { Tooltip } from './Tooltip';
 import { useAppStore } from '../store/useAppStore';
 import type { BusinessDomain, Theme } from '../types';
 
-const ROUTE_MAP: Record<string, string> = {
+export const ROUTE_MAP: Record<string, string> = {
   'Чат': '/chat',
   'Все сценарии': '/scenarios',
   'Prompts Library': '/scenarios',
@@ -61,7 +61,7 @@ const ROUTE_MAP: Record<string, string> = {
   'Заметки': '/notes',
 };
 
-const ITEM_TIPS: Record<string, string> = {
+export const ITEM_TIPS: Record<string, string> = {
   'AI Tools':     'Чат, агенты и промты',
   'Сообщения':    'Переписка и уведомления',
   'Проекты':      'Проекты и дерево целей',
@@ -79,7 +79,7 @@ const ITEM_TIPS: Record<string, string> = {
   'Страницы':     'База знаний',
 };
 
-const DETAIL_TIPS: Record<string, string> = {
+export const DETAIL_TIPS: Record<string, string> = {
   'Чат':                        'Диалог с AI в реальном времени',
   'Агенты':                     'Специализированные AI-агенты',
   'Prompts Library':            'Готовые промты по сферам',
@@ -120,11 +120,11 @@ const DETAIL_TIPS: Record<string, string> = {
   'Управленческий Отчет':       'Отчёт для руководства',
 };
 
-type NavDetail = { label: string; icon: React.ComponentType<any>; isAction?: boolean };
-type NavItem = { icon: React.ComponentType<any>; label: string; href: string; details: NavDetail[] };
+export type NavDetail = { label: string; icon: React.ComponentType<any>; isAction?: boolean };
+export type NavItem = { icon: React.ComponentType<any>; label: string; href: string; details: NavDetail[] };
 
 // Always visible
-const BASE_ITEMS: NavItem[] = [
+export const BASE_ITEMS: NavItem[] = [
   { icon: Bot, label: 'AI Tools', href: '/chat', details: [
     { label: 'Чат', icon: Sparkles },
     { label: 'Агенты', icon: Bot },
@@ -159,7 +159,7 @@ const BASE_ITEMS: NavItem[] = [
 ];
 
 // Domain-specific extras — only shown when that domain is active
-const DOMAIN_SPECIFIC: Record<string, NavItem[]> = {
+export const DOMAIN_SPECIFIC: Record<string, NavItem[]> = {
   'Юридический': [
     { icon: Briefcase, label: 'Юридический', href: '/legal/dashboard', details: [
       { label: 'Юридический Дашборд', icon: Scale },

@@ -17,6 +17,24 @@ const CAT_COLORS: Record<Category, string> = {
 const CATS: Category[] = ['Общее', 'Решение', 'Идея', 'Риск', 'Встреча'];
 const STORAGE_KEY = 'proji_journal_notes_v2';
 
+const MOCK_NOTES: Note[] = [
+  { id: 'mock-1', title: 'Увеличить ресурсы на бэкенд', category: 'Решение', pinned: true,
+    date: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
+    text: 'Провел встречу с командой разработки. Обсудили ключевые блокеры в спринте. Принято решение увеличить ресурсы на бэкенд и перенести часть задач Sprint Review.' },
+  { id: 'mock-2', title: 'Бюджет на Q3 утверждён клиентом', category: 'Встреча', pinned: false,
+    date: new Date(Date.now() - 1000 * 60 * 60 * 20).toISOString(),
+    text: 'Созвон с ключевым клиентом по проекту «Marketing Q2». Утвердили бюджет на следующий квартал, клиент просит ускорить интеграцию с внешней CRM.' },
+  { id: 'mock-3', title: 'Риск задержки поставки чипов', category: 'Риск', pinned: true,
+    date: new Date(Date.now() - 1000 * 60 * 60 * 30).toISOString(),
+    text: 'По проекту «Модернизация цеха №4» зафиксирован риск задержки поставок комплектующих. Нужно зафиксировать резервного поставщика в течение недели.' },
+  { id: 'mock-4', title: 'Идея: автоматизировать отчётность KPI', category: 'Идея', pinned: false,
+    date: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
+    text: 'Предложение от Ивана П.: собрать форму отчётности KPI в единый дашборд, чтобы не сверять Excel вручную каждую неделю.' },
+  { id: 'mock-5', title: 'Аренда офиса — финальные правки договора', category: 'Решение', pinned: false,
+    date: new Date(Date.now() - 1000 * 60 * 60 * 72).toISOString(),
+    text: 'Юридический отдел доработал договор аренды офиса, остались правки по пункту о досрочном расторжении. Закрыть до конца недели.' },
+];
+
 export default function ManagementJournalPage() {
   const [notes, setNotes]       = useState<Note[]>([]);
   const [search, setSearch]     = useState('');
@@ -29,7 +47,12 @@ export default function ManagementJournalPage() {
   const [category, setCategory] = useState<Category>('Общее');
 
   useEffect(() => {
-    try { setNotes(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')); } catch {}
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      setNotes(saved.length > 0 ? saved : MOCK_NOTES);
+    } catch {
+      setNotes(MOCK_NOTES);
+    }
   }, []);
 
   const save = (updated: Note[]) => {
