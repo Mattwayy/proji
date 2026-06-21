@@ -285,7 +285,7 @@ export default function LoginPage() {
         </svg>
 
         {/* Content — auto-rotating slider */}
-        <div className="relative z-10 w-full flex-1 flex flex-col items-center justify-center px-12 py-12 overflow-hidden">
+        <div className="relative z-10 w-full flex-1 flex flex-col items-center justify-center px-12 pt-12 pb-20 overflow-hidden">
           <AnimatePresence mode="wait">
             <motion.div
               key={slideIdx}
@@ -293,24 +293,29 @@ export default function LoginPage() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -24 }}
               transition={{ duration: 0.45, ease: 'easeOut' }}
-              className="w-full flex flex-col items-center justify-center"
+              className="w-full flex flex-col items-center justify-center scale-[0.85] xl:scale-100 origin-center"
             >
               <ActiveIllustration />
             </motion.div>
           </AnimatePresence>
         </div>
 
-        {/* Slider dots */}
-        <div className="relative z-10 flex items-center justify-center gap-2 pb-10" role="tablist" aria-label="Слайды иллюстраций">
+        {/* Slider dots — pinned to bottom, always visible/clickable regardless of illustration height */}
+        <div
+          className="absolute bottom-7 left-0 right-0 z-20 flex items-center justify-center gap-2"
+          role="tablist"
+          aria-label="Слайды иллюстраций"
+        >
           {ILLUSTRATIONS.map((_, i) => (
             <button
               key={i}
+              type="button"
               role="tab"
               aria-selected={slideIdx === i}
               aria-label={`Слайд ${i + 1} из ${ILLUSTRATIONS.length}`}
               onClick={() => setSlideIdx(i)}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                slideIdx === i ? 'w-6 bg-gradient-to-r from-indigo-400 to-violet-400' : 'w-1.5 bg-white/20 hover:bg-white/35'
+              className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                slideIdx === i ? 'w-7 bg-gradient-to-r from-indigo-400 to-violet-400' : 'w-2 bg-white/25 hover:bg-white/45'
               }`}
             />
           ))}
