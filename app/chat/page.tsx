@@ -343,15 +343,13 @@ export default function ChatPage() {
       </div>
 
       <style jsx>{`
-        .ai-input-glow::before {
-          content: '';
-          position: absolute;
-          inset: -40%;
-          background: conic-gradient(from 0deg, #3b82f6, #14b8a6, #6366f1, #3b82f6);
-          animation: ai-glow-spin 4s linear infinite;
+        .ai-input-glow {
+          background: linear-gradient(90deg, #3b82f6, #14b8a6, #6366f1, #3b82f6);
+          background-size: 300% 100%;
+          animation: ai-glow-move 5s linear infinite;
         }
-        @keyframes ai-glow-spin {
-          to { transform: rotate(360deg); }
+        @keyframes ai-glow-move {
+          to { background-position: -300% 0; }
         }
       `}</style>
     </div>
