@@ -317,13 +317,24 @@ export default function MessagesPage() {
 
             {/* AI suggestion chips (toggleable) */}
             {aiSuggestionsOn && (
-              <div className="px-4 pb-2 flex items-center gap-2 overflow-x-auto shrink-0">
-                {SUGGESTIONS.map((s) => (
-                  <button key={s} onClick={() => sendSuggestion(s)}
-                    className="shrink-0 text-xs font-bold px-3 py-1.5 rounded-full border border-proji-primary/20 text-proji-primary bg-proji-primary/5 hover:bg-proji-primary/10 transition-colors whitespace-nowrap">
-                    {s}
-                  </button>
-                ))}
+              <div className="px-4 pb-3 flex items-center gap-2 overflow-x-auto shrink-0">
+                {SUGGESTIONS.map((s, i) => {
+                  const isContextual = i === SUGGESTIONS.length - 1;
+                  return (
+                    <button
+                      key={s}
+                      onClick={() => sendSuggestion(s)}
+                      className={`shrink-0 flex items-center gap-1.5 text-sm font-bold px-4 py-2 rounded-full whitespace-nowrap transition-colors ${
+                        isContextual
+                          ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/25 hover:opacity-90'
+                          : 'bg-white border border-slate-200 text-slate-700 hover:border-proji-primary/40 hover:bg-slate-50'
+                      }`}
+                    >
+                      {isContextual && <Sparkles size={13} aria-hidden="true" />}
+                      {s}
+                    </button>
+                  );
+                })}
               </div>
             )}
 
