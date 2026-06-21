@@ -2,11 +2,18 @@
 import { useState, useEffect } from 'react';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Eye, EyeOff, KeyRound, Mail, Lock, Loader2, ArrowRight } from 'lucide-react';
-import { IllustrationQuickCreate, IllustrationContextHelp } from './illustrations';
+import {
+  IllustrationQuickCreate, IllustrationContextHelp, IllustrationProduction,
+  IllustrationSales, IllustrationHR, IllustrationAIConsultant,
+} from './illustrations';
 
-const ILLUSTRATIONS = [IllustrationQuickCreate, IllustrationContextHelp];
+const ILLUSTRATIONS = [
+  IllustrationAIConsultant, IllustrationQuickCreate, IllustrationContextHelp,
+  IllustrationProduction, IllustrationSales, IllustrationHR,
+];
+const SLIDE_INTERVAL = 6000;
 
 export default function LoginPage() {
   const { data: session, status } = useSession();
@@ -16,8 +23,15 @@ export default function LoginPage() {
   const [showKey, setShowKey] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [illustIdx] = useState(() => Math.floor(Math.random() * ILLUSTRATIONS.length));
-  const ActiveIllustration = ILLUSTRATIONS[illustIdx];
+  const [slideIdx, setSlideIdx] = useState(0);
+  const ActiveIllustration = ILLUSTRATIONS[slideIdx];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSlideIdx((i) => (i + 1) % ILLUSTRATIONS.length);
+    }, SLIDE_INTERVAL);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     if (status === 'authenticated') router.replace('/domains');
@@ -220,7 +234,7 @@ export default function LoginPage() {
       </div>
 
       {/* ─── Right — decorative panel ─── */}
-      <div className="hidden lg:flex flex-1 relative overflow-hidden bg-slate-900">
+      <div className="hidden lg:flex lg:flex-col flex-1 relative overflow-hidden bg-slate-900">
         {/* Base gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
 
@@ -270,9 +284,36 @@ export default function LoginPage() {
           ))}
         </svg>
 
-        {/* Content — random illustration */}
-        <div className="relative z-10 w-full flex flex-col items-center justify-center px-12 py-12">
-          <ActiveIllustration />
+        {/* Content — auto-rotating slider */}
+        <div className="relative z-10 w-full flex-1 flex flex-col items-center justify-center px-12 py-12 overflow-hidden">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={slideIdx}
+              initial={{ opacity: 0, x: 24 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -24 }}
+              transition={{ duration: 0.45, ease: 'easeOut' }}
+              className="w-full flex flex-col items-center justify-center"
+            >
+              <ActiveIllustration />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Slider dots */}
+        <div className="relative z-10 flex items-center justify-center gap-2 pb-10" role="tablist" aria-label="Слайды иллюстраций">
+          {ILLUSTRATIONS.map((_, i) => (
+            <button
+              key={i}
+              role="tab"
+              aria-selected={slideIdx === i}
+              aria-label={`Слайд ${i + 1} из ${ILLUSTRATIONS.length}`}
+              onClick={() => setSlideIdx(i)}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                slideIdx === i ? 'w-6 bg-gradient-to-r from-indigo-400 to-violet-400' : 'w-1.5 bg-white/20 hover:bg-white/35'
+              }`}
+            />
+          ))}
         </div>
 
         {/* Bottom line */}
