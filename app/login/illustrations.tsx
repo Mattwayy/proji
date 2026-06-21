@@ -6,12 +6,14 @@ const animStyle = `
   @keyframes dash-merge { 0% { stroke-dashoffset:70; } 100% { stroke-dashoffset:0; } }
 `;
 
-const card = 'flex-1 min-w-0 bg-white/[0.07] rounded-xl p-[12px]';
+const card = 'flex-1 min-w-0 bg-white/[0.07] rounded-xl p-[18px]';
+// Shared frame so every illustration occupies roughly the same footprint
+export const FRAME = 'w-full max-w-[700px] mx-auto';
 
 function Connector({ delay }: { delay: string }) {
   return (
     <div
-      className="relative h-[2px] w-[36px] mx-1 flex-shrink-0 overflow-hidden"
+      className="relative h-[2px] w-[44px] mx-1.5 flex-shrink-0 overflow-hidden"
       style={{ background: 'rgba(59,130,246,0.15)' }}
     >
       <div
@@ -28,7 +30,7 @@ function Connector({ delay }: { delay: string }) {
 
 function BezierMerge({ filterId }: { filterId: string }) {
   return (
-    <svg width="48" height="172" viewBox="0 0 48 172" fill="none" className="flex-shrink-0">
+    <svg width="56" height="200" viewBox="0 0 48 172" fill="none" className="flex-shrink-0">
       <defs>
         <filter id={filterId}>
           <feGaussianBlur stdDeviation="2" result="b" />
@@ -55,51 +57,51 @@ function BezierMerge({ filterId }: { filterId: string }) {
 ═══════════════════════════════════════ */
 export function IllustrationQuickCreate() {
   return (
-    <div className="flex flex-col items-center gap-7 w-full text-center">
+    <div className={`flex flex-col items-center gap-9 text-center ${FRAME}`}>
       <div>
-        <h2 className="text-[2rem] font-black text-white leading-tight">Быстрое создание</h2>
-        <p className="text-[1rem] font-semibold text-slate-400 mt-2 max-w-sm mx-auto">
+        <h2 className="text-[2.5rem] font-black text-white leading-tight">Быстрое создание</h2>
+        <p className="text-[1.15rem] font-semibold text-slate-400 mt-3 max-w-lg mx-auto">
           Добавляйте новые задачи, документы и проекты в одно нажатие через глобальное меню.
         </p>
       </div>
 
-      <div className="relative w-full max-w-sm">
-        <div className="relative bg-white rounded-[28px] shadow-2xl p-5 pt-4">
-          <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center gap-2">
-              <div className="w-5 h-5 rounded-md bg-indigo-100 flex items-center justify-center">
-                <span className="text-indigo-500 text-[10px] font-black">P</span>
+      <div className="relative w-full">
+        <div className="relative bg-white rounded-[36px] shadow-2xl p-8 pt-6">
+          <div className="flex items-center justify-between mb-7">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center">
+                <span className="text-indigo-500 text-sm font-black">P</span>
               </div>
-              <div className="h-2.5 w-20 bg-slate-100 rounded-full" />
+              <div className="h-3.5 w-28 bg-slate-100 rounded-full" />
             </div>
-            <div className="flex gap-1">
-              <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
-              <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
-              <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-3 mb-3">
-            <div className="h-16 bg-slate-50 border border-slate-100 rounded-2xl p-2.5 flex flex-col justify-between">
-              <FileText size={14} className="text-violet-400" />
-              <div className="h-1.5 w-3/4 bg-slate-200 rounded-full" />
-            </div>
-            <div className="h-16 bg-slate-50 border border-slate-100 rounded-2xl p-2.5 flex flex-col justify-between">
-              <CheckSquare size={14} className="text-emerald-400" />
-              <div className="h-1.5 w-2/3 bg-slate-200 rounded-full" />
+            <div className="flex gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-slate-200" />
+              <div className="w-2.5 h-2.5 rounded-full bg-slate-200" />
+              <div className="w-2.5 h-2.5 rounded-full bg-slate-200" />
             </div>
           </div>
-          <div className="h-16 bg-slate-50 border border-slate-100 rounded-2xl p-2.5 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-100 to-violet-100 flex items-center justify-center shrink-0">
-              <FolderKanban size={16} className="text-indigo-500" />
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="h-24 bg-slate-50 border border-slate-100 rounded-2xl p-4 flex flex-col justify-between">
+              <FileText size={22} className="text-violet-400" />
+              <div className="h-2.5 w-3/4 bg-slate-200 rounded-full" />
             </div>
-            <div className="flex-1 space-y-1.5">
-              <div className="h-1.5 w-3/4 bg-slate-200 rounded-full" />
-              <div className="h-1.5 w-1/2 bg-slate-100 rounded-full" />
+            <div className="h-24 bg-slate-50 border border-slate-100 rounded-2xl p-4 flex flex-col justify-between">
+              <CheckSquare size={22} className="text-emerald-400" />
+              <div className="h-2.5 w-2/3 bg-slate-200 rounded-full" />
+            </div>
+          </div>
+          <div className="h-24 bg-slate-50 border border-slate-100 rounded-2xl p-4 flex items-center gap-4">
+            <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-indigo-100 to-violet-100 flex items-center justify-center shrink-0">
+              <FolderKanban size={26} className="text-indigo-500" />
+            </div>
+            <div className="flex-1 space-y-2.5">
+              <div className="h-2.5 w-3/4 bg-slate-200 rounded-full" />
+              <div className="h-2.5 w-1/2 bg-slate-100 rounded-full" />
             </div>
           </div>
 
-          <div className="absolute -top-3 -right-3 w-10 h-10 rounded-full bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-600/30">
-            <span className="text-white text-xl font-black leading-none">+</span>
+          <div className="absolute -top-5 -right-5 w-16 h-16 rounded-full bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-600/30">
+            <span className="text-white text-3xl font-black leading-none">+</span>
           </div>
         </div>
       </div>
@@ -112,39 +114,39 @@ export function IllustrationQuickCreate() {
 ═══════════════════════════════════════ */
 export function IllustrationContextHelp() {
   return (
-    <div className="flex flex-col items-center gap-7 w-full text-center">
+    <div className={`flex flex-col items-center gap-9 text-center ${FRAME}`}>
       <div>
-        <h2 className="text-[2rem] font-black text-white leading-tight">Контекстная помощь</h2>
-        <p className="text-[1rem] font-semibold text-slate-400 mt-2 max-w-sm mx-auto">
+        <h2 className="text-[2.5rem] font-black text-white leading-tight">Контекстная помощь</h2>
+        <p className="text-[1.15rem] font-semibold text-slate-400 mt-3 max-w-lg mx-auto">
           Получайте интеллектуальную аналитику и данные для любой страницы в один клик.
         </p>
       </div>
 
-      <div className="relative w-full max-w-sm">
-        <div className="relative bg-white rounded-[28px] shadow-2xl p-6 pt-8 min-h-[200px]">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-[10px] font-black uppercase tracking-widest text-slate-300">Аналитика страницы</span>
-            <TrendingUp size={14} className="text-emerald-400" />
+      <div className="relative w-full">
+        <div className="relative bg-white rounded-[36px] shadow-2xl p-9 pt-11 min-h-[300px]">
+          <div className="flex items-center justify-between mb-6">
+            <span className="text-xs font-black uppercase tracking-widest text-slate-300">Аналитика страницы</span>
+            <TrendingUp size={20} className="text-emerald-400" />
           </div>
-          <svg className="absolute left-6 top-14 w-28 h-16" viewBox="0 0 110 64" fill="none">
+          <svg className="absolute left-9 top-20 w-40 h-24" viewBox="0 0 110 64" fill="none">
             <path d="M4 56 L60 14 L104 4" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" />
             <path d="M88 4 L104 4 L104 20" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             <circle cx="104" cy="4" r="3" fill="#6366f1" />
           </svg>
-          <div className="flex justify-end mb-4">
-            <span className="text-lg font-black text-indigo-500">+24%</span>
+          <div className="flex justify-end mb-6">
+            <span className="text-2xl font-black text-indigo-500">+24%</span>
           </div>
-          <div className="space-y-2.5">
-            <div className="flex items-center gap-2">
-              <Sparkles size={11} className="text-amber-400 shrink-0" />
-              <div className="h-2 w-24 bg-slate-100 rounded-full" />
+          <div className="space-y-3.5">
+            <div className="flex items-center gap-2.5">
+              <Sparkles size={16} className="text-amber-400 shrink-0" />
+              <div className="h-3 w-36 bg-slate-100 rounded-full" />
             </div>
-            <div className="h-2.5 w-full bg-slate-100 rounded-full" />
-            <div className="h-2.5 w-3/4 bg-slate-100 rounded-full" />
+            <div className="h-3.5 w-full bg-slate-100 rounded-full" />
+            <div className="h-3.5 w-3/4 bg-slate-100 rounded-full" />
           </div>
 
-          <div className="absolute top-4 right-4 w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center">
-            <span className="text-indigo-600 text-xs font-black border border-indigo-400 rounded-full w-4 h-4 flex items-center justify-center">i</span>
+          <div className="absolute top-6 right-6 w-14 h-14 rounded-full bg-indigo-100 flex items-center justify-center">
+            <span className="text-indigo-600 text-base font-black border border-indigo-400 rounded-full w-6 h-6 flex items-center justify-center">i</span>
           </div>
         </div>
       </div>
@@ -157,13 +159,13 @@ export function IllustrationContextHelp() {
 ═══════════════════════════════════════ */
 export function IllustrationProduction() {
   return (
-    <div className="flex flex-col gap-6 w-full">
+    <div className={`flex flex-col gap-8 ${FRAME}`}>
       <style>{animStyle}</style>
 
-      <h2 className="text-[2rem] font-black text-white leading-tight">
+      <h2 className="text-[2.5rem] font-black text-white leading-tight">
         Управляйте производством и запасами
       </h2>
-      <p className="text-[1rem] font-semibold text-slate-500">
+      <p className="text-[1.15rem] font-semibold text-slate-500">
         От заказа до отгрузки — всё под контролем.
       </p>
 
@@ -272,13 +274,13 @@ export function IllustrationProduction() {
 ═══════════════════════════════════════ */
 export function IllustrationSales() {
   return (
-    <div className="flex flex-col gap-6 w-full">
+    <div className={`flex flex-col gap-8 ${FRAME}`}>
       <style>{animStyle}</style>
 
-      <h2 className="text-[2rem] font-black text-white leading-tight">
+      <h2 className="text-[2.5rem] font-black text-white leading-tight">
         Управляйте продажами и клиентами
       </h2>
-      <p className="text-[1rem] font-semibold text-slate-500">
+      <p className="text-[1.15rem] font-semibold text-slate-500">
         От первого контакта до закрытой сделки.
       </p>
 
@@ -373,13 +375,13 @@ export function IllustrationSales() {
 ═══════════════════════════════════════ */
 export function IllustrationHR() {
   return (
-    <div className="flex flex-col gap-6 w-full">
+    <div className={`flex flex-col gap-8 ${FRAME}`}>
       <style>{animStyle}</style>
 
-      <h2 className="text-[2rem] font-black text-white leading-tight">
+      <h2 className="text-[2.5rem] font-black text-white leading-tight">
         Управляйте талантами и командой
       </h2>
-      <p className="text-[1rem] font-semibold text-slate-500">
+      <p className="text-[1.15rem] font-semibold text-slate-500">
         Найм, адаптация и развитие — в одном месте.
       </p>
 
@@ -490,44 +492,44 @@ export function IllustrationAIConsultant() {
     @keyframes ai-blink { 0%, 80%, 100% { opacity: 0.25; } 40% { opacity: 1; } }
   `;
   return (
-    <div className="flex flex-col items-center gap-7 w-full text-center">
+    <div className={`flex flex-col items-center gap-9 text-center ${FRAME}`}>
       <style>{typingStyle}</style>
       <div>
-        <h2 className="text-[2rem] font-black text-white leading-tight">Умный ИИ-Консультант</h2>
-        <p className="text-[1rem] font-semibold text-slate-400 mt-2 max-w-sm mx-auto">
+        <h2 className="text-[2.5rem] font-black text-white leading-tight">Умный ИИ-Консультант</h2>
+        <p className="text-[1.15rem] font-semibold text-slate-400 mt-3 max-w-lg mx-auto">
           Ваш личный ассистент всегда готов ответить на вопросы, опираясь на внутренние данные системы.
         </p>
       </div>
 
-      <div className="relative w-full max-w-sm">
-        <div className="relative bg-white rounded-[28px] shadow-2xl p-5 pt-4 min-h-[220px] flex flex-col gap-3">
+      <div className="relative w-full">
+        <div className="relative bg-white rounded-[40px] shadow-2xl p-9 pt-7 min-h-[400px] flex flex-col gap-5">
           {/* Header */}
-          <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center shrink-0">
-              <Sparkles size={12} className="text-white" />
+          <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center shrink-0">
+              <Sparkles size={20} className="text-white" />
             </div>
             <div className="text-left flex-1">
-              <p className="text-xs font-bold text-slate-800 leading-tight">PROGPT</p>
-              <p className="text-[9px] text-emerald-500 font-semibold flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Онлайн
+              <p className="text-base font-bold text-slate-800 leading-tight">PROGPT</p>
+              <p className="text-sm text-emerald-500 font-semibold flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-400" /> Онлайн
               </p>
             </div>
           </div>
 
           {/* User message */}
           <div className="flex justify-end">
-            <div className="bg-slate-100 rounded-2xl rounded-tr-sm px-3 py-2 max-w-[75%]">
-              <p className="text-[11px] text-slate-600 text-left">Какой статус по проекту «Запуск»?</p>
+            <div className="bg-slate-100 rounded-2xl rounded-tr-sm px-5 py-3.5 max-w-[75%]">
+              <p className="text-base text-slate-600 text-left">Какой статус по проекту «Запуск»?</p>
             </div>
           </div>
 
           {/* AI answer */}
           <div className="flex justify-start">
-            <div className="bg-gradient-to-br from-indigo-50 to-violet-50 border border-indigo-100 rounded-2xl rounded-tl-sm px-3 py-2 max-w-[80%] text-left space-y-1.5">
-              <p className="text-[11px] text-slate-700 leading-relaxed">
+            <div className="bg-gradient-to-br from-indigo-50 to-violet-50 border border-indigo-100 rounded-2xl rounded-tl-sm px-5 py-3.5 max-w-[80%] text-left space-y-2.5">
+              <p className="text-base text-slate-700 leading-relaxed">
                 Проект выполнен на <span className="font-bold text-indigo-600">68%</span>, 3 задачи просрочены.
               </p>
-              <div className="h-1.5 w-full bg-white rounded-full overflow-hidden">
+              <div className="h-2.5 w-full bg-white rounded-full overflow-hidden">
                 <div className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full" style={{ width: '68%' }} />
               </div>
             </div>
@@ -535,11 +537,11 @@ export function IllustrationAIConsultant() {
 
           {/* Typing indicator */}
           <div className="flex justify-start">
-            <div className="bg-slate-50 border border-slate-100 rounded-2xl px-3 py-2.5 flex items-center gap-1">
+            <div className="bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 flex items-center gap-1.5">
               {[0, 1, 2].map((i) => (
                 <span
                   key={i}
-                  className="w-1.5 h-1.5 rounded-full bg-slate-400"
+                  className="w-2.5 h-2.5 rounded-full bg-slate-400"
                   style={{ animation: 'ai-blink 1.2s infinite', animationDelay: `${i * 0.2}s` }}
                 />
               ))}
@@ -547,16 +549,16 @@ export function IllustrationAIConsultant() {
           </div>
 
           {/* Floating notification bubble */}
-          <div className="absolute -top-4 -right-4 w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-600/30">
-            <MessageCircle size={18} className="text-white" />
-            <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-emerald-400 border-2 border-slate-900" />
+          <div className="absolute -top-6 -right-6 w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-600/30">
+            <MessageCircle size={26} className="text-white" />
+            <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-emerald-400 border-2 border-slate-900" />
           </div>
 
           {/* Input row */}
-          <div className="mt-auto flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-full px-3 py-2">
-            <div className="h-1.5 flex-1 bg-slate-200 rounded-full" />
-            <div className="w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center shrink-0">
-              <Send size={10} className="text-white" />
+          <div className="mt-auto flex items-center gap-3 bg-slate-50 border border-slate-100 rounded-full px-5 py-3">
+            <div className="h-2.5 flex-1 bg-slate-200 rounded-full" />
+            <div className="w-9 h-9 rounded-full bg-indigo-500 flex items-center justify-center shrink-0">
+              <Send size={14} className="text-white" />
             </div>
           </div>
         </div>
