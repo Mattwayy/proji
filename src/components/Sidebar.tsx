@@ -291,21 +291,24 @@ export function Sidebar() {
         onClick={(e) => { e.stopPropagation(); setIsSidebarExpanded((v) => !v); }}
         className={`mb-1 shrink-0 flex items-center justify-center w-9 h-9 text-slate-400 hover:text-slate-700 transition-all ${isSidebarExpanded ? 'self-end' : ''}`}
         title={isSidebarExpanded ? 'Свернуть' : 'Развернуть'}
+        aria-label={isSidebarExpanded ? 'Свернуть боковое меню' : 'Развернуть боковое меню'}
+        aria-expanded={isSidebarExpanded}
       >
-        {isSidebarExpanded ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
+        {isSidebarExpanded ? <ChevronLeft size={18} aria-hidden="true" /> : <ChevronRight size={18} aria-hidden="true" />}
       </button>
 
       {/* AI Factory button */}
       <Tooltip text="Фабрика сущностей — AI разбор текста" side="right">
         <button
           onClick={() => setShowEntityFactory(true)}
+          aria-label="Фабрика сущностей — AI разбор текста"
           className={`mb-1 shrink-0 flex items-center gap-2.5 rounded-xl transition-all bg-violet-50 hover:bg-violet-100 text-violet-600 font-bold ${
             isSidebarExpanded
               ? 'w-full px-3 py-2 text-sm justify-start'
               : 'w-9 h-9 justify-center'
           }`}
         >
-          <Wand2 size={16} className="shrink-0" />
+          <Wand2 size={16} className="shrink-0" aria-hidden="true" />
           {isSidebarExpanded && <span className="whitespace-nowrap">AI Фабрика</span>}
         </button>
       </Tooltip>
@@ -317,6 +320,9 @@ export function Sidebar() {
             <Tooltip text={ITEM_TIPS[item.label] ?? ''} side="right" className="w-full">
             <button
               onClick={(e) => handleItemClick(e, item)}
+              aria-label={item.label}
+              aria-expanded={item.details.length > 1 ? openPanel === item.label : undefined}
+              aria-current={isActive(item) ? 'page' : undefined}
               className={`w-full transition-all duration-200 flex items-center ${
                 isSidebarExpanded ? 'px-3 py-2.5 gap-3 text-sm font-semibold justify-start' : 'p-3 justify-center'
               } ${
@@ -325,10 +331,10 @@ export function Sidebar() {
                   : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
               }`}
             >
-              <item.icon size={18} className="shrink-0" />
+              <item.icon size={18} className="shrink-0" aria-hidden="true" />
               {isSidebarExpanded && <span className="whitespace-nowrap flex-1">{item.label}</span>}
               {isSidebarExpanded && item.details.length > 1 && (
-                <ChevronDown size={13} className={`transition-transform duration-200 ${openPanel === item.label ? 'rotate-180' : ''}`} />
+                <ChevronDown size={13} aria-hidden="true" className={`transition-transform duration-200 ${openPanel === item.label ? 'rotate-180' : ''}`} />
               )}
             </button>
             </Tooltip>
@@ -401,10 +407,16 @@ export function Sidebar() {
       <div className={`mt-auto flex flex-col gap-0 border-t border-[#d5dae8] pt-1 ${isSidebarExpanded ? 'w-full' : ''}`}>
         <div className="relative">
           <div
+            role="button"
+            tabIndex={0}
+            aria-haspopup="true"
+            aria-expanded={showAccountMenu}
+            aria-label="Меню аккаунта: Sund Serik"
             onClick={(e) => { e.stopPropagation(); setShowAccountMenu(!showAccountMenu); }}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); setShowAccountMenu(!showAccountMenu); } }}
             className={`flex items-center gap-3 cursor-pointer p-2 transition-all group ${isSidebarExpanded ? 'w-full px-3 hover:bg-slate-50' : 'justify-center hover:bg-slate-50'}`}
           >
-            <div className="w-9 h-9 shrink-0 rounded-full flex items-center justify-center text-[10px] font-bold bg-slate-200 text-slate-700">
+            <div className="w-9 h-9 shrink-0 rounded-full flex items-center justify-center text-[10px] font-bold bg-slate-200 text-slate-700" aria-hidden="true">
               SS
             </div>
             {isSidebarExpanded && (
@@ -417,6 +429,8 @@ export function Sidebar() {
           <AnimatePresence>
             {showAccountMenu && (
               <motion.div
+                role="menu"
+                aria-label="Меню аккаунта"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
@@ -429,46 +443,54 @@ export function Sidebar() {
                     <p className="text-[10px] text-proji-secondary">sund.serik@gmail.com</p>
                   </div>
                   <button
+                    role="menuitem"
                     onClick={() => { router.push('/cabinet'); setShowAccountMenu(false); }}
                     className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-proji-secondary hover:bg-proji-sidebar hover:text-proji-dark transition-colors"
                   >
-                    <KeyRound size={14} /> Личный кабинет
+                    <KeyRound size={14} aria-hidden="true" /> Личный кабинет
                   </button>
-                  <button className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-proji-secondary hover:bg-proji-sidebar hover:text-proji-dark transition-colors">
-                    <Settings size={14} /> Настройки
+                  <button role="menuitem" className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-proji-secondary hover:bg-proji-sidebar hover:text-proji-dark transition-colors">
+                    <Settings size={14} aria-hidden="true" /> Настройки
                   </button>
                   <button
+                    role="menuitem"
                     onClick={() => { router.push('/tariffs'); setShowAccountMenu(false); }}
                     className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-proji-secondary hover:bg-proji-sidebar hover:text-proji-dark transition-colors"
                   >
-                    <CreditCard size={14} /> Тарифы
+                    <CreditCard size={14} aria-hidden="true" /> Тарифы
                   </button>
                   <button
+                    role="menuitem"
                     onClick={() => { router.push('/payment'); setShowAccountMenu(false); }}
                     className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-proji-secondary hover:bg-proji-sidebar hover:text-proji-dark transition-colors"
                   >
-                    <Wallet size={14} /> Оплата
+                    <Wallet size={14} aria-hidden="true" /> Оплата
                   </button>
                   <button
+                    role="menuitem"
                     onClick={() => signOut({ callbackUrl: '/login' })}
                     className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-red-400 hover:bg-red-50 hover:text-red-600 transition-colors"
                   >
-                    <LogOut size={14} /> Выйти
+                    <LogOut size={14} aria-hidden="true" /> Выйти
                   </button>
                   <div className="h-px bg-proji-border my-2" />
-                  <p className="text-[8px] uppercase font-bold tracking-widest text-proji-secondary px-3 mb-1">Режим</p>
-                  {(['light', 'dark', 'system'] as Theme[]).map((t) => (
-                    <button
-                      key={t}
-                      onClick={() => setTheme(t)}
-                      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-colors ${theme === t ? 'bg-proji-dark text-white' : 'text-proji-secondary hover:bg-proji-sidebar hover:text-proji-dark'}`}
-                    >
-                      {t === 'light' ? <Sun size={12} /> : t === 'dark' ? <Moon size={12} /> : <Monitor size={12} />}
-                      {t === 'light' ? 'Светлый' : t === 'dark' ? 'Тёмный' : 'Системный'}
-                    </button>
-                  ))}
+                  <p className="text-[8px] uppercase font-bold tracking-widest text-proji-secondary px-3 mb-1" id="sidebar-theme-label">Режим</p>
+                  <div role="radiogroup" aria-labelledby="sidebar-theme-label" className="flex flex-col gap-1">
+                    {(['light', 'dark', 'system'] as Theme[]).map((t) => (
+                      <button
+                        key={t}
+                        role="radio"
+                        aria-checked={theme === t}
+                        onClick={() => setTheme(t)}
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-colors ${theme === t ? 'bg-proji-dark text-white' : 'text-proji-secondary hover:bg-proji-sidebar hover:text-proji-dark'}`}
+                      >
+                        {t === 'light' ? <Sun size={12} aria-hidden="true" /> : t === 'dark' ? <Moon size={12} aria-hidden="true" /> : <Monitor size={12} aria-hidden="true" />}
+                        {t === 'light' ? 'Светлый' : t === 'dark' ? 'Тёмный' : 'Системный'}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <div className="absolute left-[-6px] bottom-5 w-3 h-3 bg-proji-bg border-b border-l border-proji-border rotate-45 rounded-sm" />
+                <div className="absolute left-[-6px] bottom-5 w-3 h-3 bg-proji-bg border-b border-l border-proji-border rotate-45 rounded-sm" aria-hidden="true" />
               </motion.div>
             )}
           </AnimatePresence>

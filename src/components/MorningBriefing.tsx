@@ -2,10 +2,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
-import { Sun, X, AlertTriangle, ArrowRight, Target, BookOpen, Clock } from 'lucide-react';
+import { Sun, X, AlertTriangle, Target, BookOpen, Clock, Sparkles, TrendingUp, Rocket, Users2 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 
 const AUTH_ROUTES = ['/login'];
+
+const DAILY_QUOTE = 'Шаг за шагом к великим победам. Действуйте!';
+
+const OKR_MOCK = [
+  { id: 'okr1', title: 'Запуск нового продукта', progress: 65, meta: 'Выручка $1M', color: 'bg-proji-primary', icon: Rocket },
+  { id: 'okr2', title: 'Найм Core-команды', progress: 80, meta: '5 специалистов', color: 'bg-emerald-500', icon: Users2 },
+];
 
 function formatToday() {
   return new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -77,6 +84,57 @@ export function MorningBriefing() {
             </div>
 
             <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
+              {/* Intro + quote */}
+              <div className="bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3.5">
+                <p className="text-sm text-slate-600 leading-relaxed">
+                  Я подготовил ежедневную аналитическую сводку по вашим проектам. Рассмотрите обновления и приоритеты на сегодня.
+                </p>
+                <p className="text-sm text-proji-primary font-semibold italic mt-2">«{DAILY_QUOTE}»</p>
+              </div>
+
+              {/* AI usage / detail bars */}
+              <div className="bg-white border border-slate-100 rounded-2xl px-4 py-3.5 flex items-center justify-between gap-4">
+                <div className="flex-1">
+                  <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5">
+                    <Sparkles size={11} /> Запросы ИИ
+                  </div>
+                  <p className="text-sm font-black text-slate-800 mb-1.5">0 / 1000</p>
+                  <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-proji-primary rounded-full" style={{ width: '2%' }} />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5 justify-end">
+                    <TrendingUp size={11} /> Детализация компании
+                  </div>
+                  <p className="text-sm font-black text-slate-800 mb-1.5 text-right">85%</p>
+                  <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-emerald-400 rounded-full" style={{ width: '85%' }} />
+                  </div>
+                </div>
+              </div>
+
+              {/* OKR progress */}
+              <div>
+                <p className="text-[11px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 mb-3">
+                  <TrendingUp size={12} /> Прогресс квартальных целей (OKR)
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {OKR_MOCK.map((okr) => (
+                    <div key={okr.id} className="bg-white border border-slate-100 rounded-2xl px-4 py-3.5">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-sm font-bold text-slate-800">{okr.title}</p>
+                        <span className="text-[11px] font-black text-proji-primary bg-proji-primary/10 px-2 py-0.5 rounded-full shrink-0 ml-2">{okr.progress}%</span>
+                      </div>
+                      <p className="text-[11px] font-bold uppercase tracking-wide text-slate-400 mb-2">{okr.meta}</p>
+                      <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div className={`h-full ${okr.color} rounded-full`} style={{ width: `${okr.progress}%` }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <div>
                 <p className="text-[11px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 mb-3">
                   <AlertTriangle size={12} /> Важные обновления
@@ -142,7 +200,7 @@ export function MorningBriefing() {
                 onClick={dismiss}
                 className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-proji-primary text-white text-sm font-bold rounded-xl hover:bg-proji-primary/90 transition-colors"
               >
-                Понятно, к работе <ArrowRight size={14} />
+                Понятно, к работе 🚀
               </button>
             </div>
           </motion.div>

@@ -9,6 +9,7 @@ import { signOut } from 'next-auth/react';
 
 import { useAppStore } from '../store/useAppStore';
 import { CommandPalette } from './CommandPalette';
+import { AppLauncher } from './AppLauncher';
 import { Tooltip } from './Tooltip';
 import type { BusinessDomain, Theme } from '../types';
 
@@ -82,6 +83,7 @@ export function Topbar() {
         <Tooltip text="Выбор рабочего домена" side="bottom">
           <button
             onClick={() => router.push('/domains')}
+            aria-label="Выбор рабочего домена"
             className="font-black text-xl text-proji-primary hover:opacity-70 transition-opacity tracking-tight shrink-0"
           >
             proji
@@ -99,7 +101,12 @@ export function Topbar() {
             onMouseLeave={() => setShowDomainDropdown(false)}
           >
             <Tooltip text="Сменить активный домен" side="bottom">
-              <button className="text-slate-800 hover:text-black transition-colors font-semibold max-w-[80px] md:max-w-none truncate">
+              <button
+                aria-label="Сменить активный домен"
+                aria-haspopup="true"
+                aria-expanded={showDomainDropdown}
+                className="text-slate-800 hover:text-black transition-colors font-semibold max-w-[80px] md:max-w-none truncate"
+              >
                 {currentDomain}
               </button>
             </Tooltip>
@@ -115,6 +122,8 @@ export function Topbar() {
                   {DOMAINS.map((domain) => (
                     <button
                       key={domain}
+                      role="menuitem"
+                      aria-current={currentDomain === domain ? 'true' : undefined}
                       onClick={() => {
                         setCurrentDomain(domain);
                         setShowDomainDropdown(false);
@@ -150,6 +159,10 @@ export function Topbar() {
             <CommandPalette />
           </div>
 
+          <div className="hidden md:block">
+            <AppLauncher />
+          </div>
+
           {/* Mobile profile avatar */}
           <button
             className="md:hidden w-8 h-8 rounded-full bg-proji-primary/10 text-proji-primary flex items-center justify-center text-[10px] font-black hover:bg-proji-primary/20 transition-colors"
@@ -165,9 +178,10 @@ export function Topbar() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setShowEntityFactory(true)}
+              aria-label="Создать заметку"
               className="w-8 h-8 rounded-lg bg-proji-primary text-white flex items-center justify-center hover:bg-proji-primary/90 transition-colors shadow-sm"
             >
-              <Plus size={15} />
+              <Plus size={15} aria-hidden="true" />
             </motion.button>
           </Tooltip>
         </div>
@@ -183,6 +197,7 @@ export function Topbar() {
               exit={{ opacity: 0 }}
               className="absolute inset-0 bg-black/40"
               onClick={() => setShowMobileAccount(false)}
+              aria-hidden="true"
             />
             <motion.div
               initial={{ y: '100%' }}
@@ -220,7 +235,7 @@ export function Topbar() {
                       onClick={action}
                       className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors text-left"
                     >
-                      <Icon size={16} className="text-proji-primary shrink-0" />
+                      <Icon size={16} className="text-proji-primary shrink-0" aria-hidden="true" />
                       {label}
                     </button>
                   ))}
@@ -228,24 +243,26 @@ export function Topbar() {
                     onClick={() => signOut({ callbackUrl: '/login' })}
                     className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-red-500 hover:bg-red-50 transition-colors text-left"
                   >
-                    <LogOut size={16} className="shrink-0" />
+                    <LogOut size={16} className="shrink-0" aria-hidden="true" />
                     Выйти
                   </button>
                 </div>
 
                 {/* Theme picker */}
                 <div>
-                  <p className="text-[9px] uppercase font-bold tracking-widest text-slate-400 px-1 mb-2">Тема оформления</p>
-                  <div className="flex gap-2">
+                  <p className="text-[9px] uppercase font-bold tracking-widest text-slate-400 px-1 mb-2" id="theme-picker-label">Тема оформления</p>
+                  <div className="flex gap-2" role="radiogroup" aria-labelledby="theme-picker-label">
                     {(['light', 'dark', 'system'] as Theme[]).map((t) => (
                       <button
                         key={t}
                         onClick={() => setTheme(t)}
+                        role="radio"
+                        aria-checked={theme === t}
                         className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
                           theme === t ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
                         }`}
                       >
-                        {t === 'light' ? <Sun size={13} /> : t === 'dark' ? <Moon size={13} /> : <Monitor size={13} />}
+                        {t === 'light' ? <Sun size={13} aria-hidden="true" /> : t === 'dark' ? <Moon size={13} aria-hidden="true" /> : <Monitor size={13} aria-hidden="true" />}
                         {t === 'light' ? 'Светлый' : t === 'dark' ? 'Тёмный' : 'Авто'}
                       </button>
                     ))}
