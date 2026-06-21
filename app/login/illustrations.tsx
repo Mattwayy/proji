@@ -50,6 +50,73 @@ function BezierMerge({ filterId }: { filterId: string }) {
 }
 
 /* ═══════════════════════════════════════
+   D — Быстрое создание
+═══════════════════════════════════════ */
+export function IllustrationQuickCreate() {
+  return (
+    <div className="flex flex-col items-center gap-7 w-full text-center">
+      <div>
+        <h2 className="text-[2rem] font-black text-white leading-tight">Быстрое создание</h2>
+        <p className="text-[1rem] font-semibold text-slate-400 mt-2 max-w-sm mx-auto">
+          Добавляйте новые задачи, документы и проекты в одно нажатие через глобальное меню.
+        </p>
+      </div>
+
+      <div className="relative w-full max-w-sm">
+        <div className="relative bg-white rounded-[28px] shadow-2xl p-5 pt-4">
+          <div className="flex items-center justify-between mb-5">
+            <div className="h-3 w-24 bg-slate-100 rounded-full" />
+          </div>
+          <div className="grid grid-cols-2 gap-3 mb-3">
+            <div className="h-16 bg-slate-50 border border-slate-100 rounded-2xl" />
+            <div className="h-16 bg-slate-50 border border-slate-100 rounded-2xl" />
+          </div>
+          <div className="h-16 bg-slate-50 border border-slate-100 rounded-2xl" />
+
+          <div className="absolute -top-3 -right-3 w-10 h-10 rounded-full bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-600/30">
+            <span className="text-white text-xl font-black leading-none">+</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════
+   E — Контекстная помощь
+═══════════════════════════════════════ */
+export function IllustrationContextHelp() {
+  return (
+    <div className="flex flex-col items-center gap-7 w-full text-center">
+      <div>
+        <h2 className="text-[2rem] font-black text-white leading-tight">Контекстная помощь</h2>
+        <p className="text-[1rem] font-semibold text-slate-400 mt-2 max-w-sm mx-auto">
+          Получайте интеллектуальную аналитику и данные для любой страницы в один клик.
+        </p>
+      </div>
+
+      <div className="relative w-full max-w-sm">
+        <div className="relative bg-white rounded-[28px] shadow-2xl p-6 pt-8 min-h-[200px]">
+          <svg className="absolute left-6 top-10 w-28 h-16" viewBox="0 0 110 64" fill="none">
+            <path d="M4 56 L60 14 L104 4" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" />
+            <path d="M88 4 L104 4 L104 20" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <div className="mt-16 space-y-2.5">
+            <div className="h-2 w-10 bg-slate-100 rounded-full" />
+            <div className="h-2.5 w-full bg-slate-100 rounded-full" />
+            <div className="h-2.5 w-3/4 bg-slate-100 rounded-full" />
+          </div>
+
+          <div className="absolute top-4 right-4 w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center">
+            <span className="text-indigo-600 text-xs font-black border border-indigo-400 rounded-full w-4 h-4 flex items-center justify-center">i</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════
    A — Производство
 ═══════════════════════════════════════ */
 export function IllustrationProduction() {

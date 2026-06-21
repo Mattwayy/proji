@@ -253,7 +253,63 @@ legal_cases (
 
 ---
 
-## 9. Таймер рабочего дня
+## 9. Сообщения и треды (чат)
+
+> Сейчас реализовано полностью на моках + `localStorage` (`app/messages/page.tsx`), ключи `proji_messages_chats` и `proji_ai_suggestions_enabled`. Бэкенду нужно заменить локальное состояние на real-time API.
+
+### Модель данных
+- **Chat** бывает трёх видов (`kind`): `person` (личная переписка), `thread` (групповое обсуждение/инцидент, отображается с `#`), `bot` (системные автоответы Proji-бота — попадает в общую ленту, отдельной вкладки не имеет).
+- Вкладки в UI: **Все** (person + thread + bot), **Люди** (только `person`), **Треды** (только `thread`).
+- Сортировка списка чатов: **По срокам** (по времени последнего сообщения) и **По количеству** (по числу непрочитанных).
+
+### Эндпоинты
+| Метод | Путь | Описание |
+|-------|------|----------|
+| GET   | `/api/chats?kind=&sort=` | Список чатов пользователя с фильтром по виду и сортировкой |
+| GET   | `/api/chats/:id/messages` | История сообщений чата (пагинация) |
+| POST  | `/api/chats/:id/messages` | Отправить сообщение |
+| PATCH | `/api/chats/:id/read` | Отметить чат прочитанным (сброс `unread`) |
+| POST  | `/api/threads` | Создать тред (обсуждение/инцидент) |
+| GET   | `/api/ai/suggestions?chatId=` | Получить контекстные ИИ-подсказки для чата (для шторки PROGPT и чипов под сообщениями) |
+
+### Модель Chat / Message
+```sql
+chats (
+  id          UUID PRIMARY KEY,
+  kind        TEXT NOT NULL,         -- 'person' | 'thread' | 'bot'
+  name        TEXT NOT NULL,
+  owner_id    UUID REFERENCES users(id),
+  related_to  TEXT,                  -- проект/инцидент, если тред привязан к сущности
+  created_at  TIMESTAMPTZ DEFAULT NOW()
+)
+
+chat_participants (
+  chat_id  UUID REFERENCES chats(id),
+  user_id  UUID REFERENCES users(id),
+  unread_count INT DEFAULT 0,
+  PRIMARY KEY (chat_id, user_id)
+)
+
+messages (
+  id         UUID PRIMARY KEY,
+  chat_id    UUID REFERENCES chats(id),
+  sender_id  UUID REFERENCES users(id),  -- NULL для системных/бот-сообщений
+  text       TEXT NOT NULL,
+  read       BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+)
+```
+
+### Пользовательские настройки чата
+- `ai_suggestions_enabled` (boolean, per-user) — тумблер «ИИ-подсказки» под полем ввода; сейчас в `localStorage`, на бэкенде стоит хранить в профиле пользователя (`users.settings jsonb`) либо отдельной таблице `user_preferences`.
+- Кнопка «PROGPT» рядом с полем ввода открывает боковую шторку с резюме переписки и контекстными предложениями (`/api/ai/suggestions`) — должна работать поверх real-time соединения, не блокируя ввод.
+
+### Real-time
+- Рекомендуется WebSocket / SSE канал `/ws/chats` для доставки новых сообщений и обновления `unread_count` без поллинга.
+
+---
+
+## 10. Таймер рабочего дня
 
 > Таймер можно сохранять на бэкенде для синхронизации между вкладками.
 
@@ -265,7 +321,7 @@ legal_cases (
 
 ---
 
-## 10. Нефункциональные требования
+## 11. Нефункциональные требования
 
 - **Авторизация**: все эндпоинты (кроме `/auth/*`) защищены JWT Bearer токеном
 - **Роли**: `admin` — доступ ко всему; `employee` — только свои данные + admin tasks по своему домену
@@ -277,7 +333,7 @@ legal_cases (
 
 ---
 
-## 11. Порядок выполнения (приоритет)
+## 12. Порядок выполнения (приоритет)
 
 1. ✅ Auth (register/login/me) — без этого ничего не работает
 2. ✅ Projects CRUD
@@ -287,5 +343,6 @@ legal_cases (
 6. Docs
 7. Legal contracts/cases
 8. Journal
-9. Timer sync
-10. Pagination, soft delete, audit log
+9. Messages/threads + real-time
+10. Timer sync
+11. Pagination, soft delete, audit log

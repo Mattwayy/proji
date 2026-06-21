@@ -1,5 +1,12 @@
 # Деплой Proji на Vercel
 
+## Статус готовности (проверено 2026-06-21)
+
+- ✅ `npx next build` проходит чисто, все 62 роута собираются (статика + 5 server routes).
+- ✅ `npx tsc --noEmit` чист, кроме одной известной ошибки (см. ниже).
+- ⚠️ **Известная проблема: `trustHost` в `src/lib/auth.ts`.** Поле `trustHost: true` добавлено как workaround для `next-auth@4.24.14` + Next.js 16 (без него вход падает с `Configuration error` на проде, т.к. NextAuth v4 не доверяет host-заголовку Vercel/прокси по умолчанию). Проблема: типы `next-auth` v4 не объявляют это поле, поэтому `tsc --noEmit` падает на этой строке. Сборка не ломается только потому что в `next.config.ts` стоит `typescript: { ignoreBuildErrors: true }` — **это маскирует и любые будущие реальные ошибки типов**, не только эту. Рекомендация на следующий этап: либо обновить `next-auth` до v5 (Auth.js, нативно поддерживает Next 16 и трактует `trustHost` правильно), либо завести локальный `.d.ts` augmentation для `AuthOptions`, и затем убрать `ignoreBuildErrors`.
+- ✅ Пройден аудит доступности (screen-reader proxy через accessibility tree): добавлены ARIA-роли/labels на интерактивные элементы в `app/chat`, `app/messages`, `src/components/ContextSidebar.tsx`, `Sidebar.tsx`, `Topbar.tsx`, `AppLauncher.tsx`, `login/page.tsx`, добавлен skip-link и landmark `<main>`. Подробности и оставшийся долг — см. `ROADMAP_NEXT_STAGES.md`.
+
 ## Требования
 - Аккаунт на [vercel.com](https://vercel.com)
 - Аккаунт на [GitHub](https://github.com) (для автодеплоя)

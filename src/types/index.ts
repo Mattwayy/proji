@@ -80,6 +80,7 @@ export interface Message {
   reasoning?: string[];
   matchingCriteria?: string[];
   options?: string[];
+  reaction?: 'like' | 'dislike' | null;
 }
 
 export interface Task {
@@ -101,7 +102,10 @@ export interface Project {
   id: string;
   name: string;
   description: string;
-  status: 'In Progress' | 'On Hold' | 'Completed' | 'Planning';
+  status: 'In Progress' | 'On Hold' | 'Completed' | 'Planning' | 'Blocked';
+  goalAchieved?: boolean;
+  completionNote?: string;
+  requireReportToComplete?: boolean;
   framework: 'Agile' | 'Waterfall' | 'Lean' | 'Scrum' | 'Hybrid';
   deadline: string;
   startDate: string;

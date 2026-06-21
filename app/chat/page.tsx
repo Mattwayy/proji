@@ -1,19 +1,24 @@
 'use client';
-import { useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect, useCallback, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowUp, Loader2, Sparkles, ChevronRight, Info, CircleCheck } from 'lucide-react';
+import { ArrowUp, Loader2, Sparkles, Wand2, ChevronRight, Info, CircleCheck, Mic, MoreVertical, ThumbsUp, ThumbsDown, Copy, Trash2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Link from 'next/link';
 import { useAppStore } from '../../src/store/useAppStore';
 
+function formatTime(ts: Date | string) {
+  const d = new Date(ts);
+  return d.toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit' });
+}
+
 const SCENARIO_PROMPTS = [
-  'Сгенерировать отчет',
-  'Найти узкие места',
-  'Подготовь презентацию',
-  'Оптимизируй процессы',
-  'Разработай документ',
-  'Проведи аудит',
+  'Собрать сводку',
+  'Найти то, что мешает',
+  'Подготовить презентацию',
+  'Ускорить работу',
+  'Написать бизнес-план',
+  'Проверить дела',
 ];
 
 export default function ChatPage() {
@@ -29,6 +34,21 @@ export default function ChatPage() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+
+  const setReaction = (id: string, reaction: 'like' | 'dislike') => {
+    setAllMessages((prev) => prev.map((m) => m.id === id ? { ...m, reaction: m.reaction === reaction ? null : reaction } : m));
+  };
+
+  const deleteMessage = (id: string) => {
+    setAllMessages((prev) => prev.filter((m) => m.id !== id));
+    setOpenMenuId(null);
+  };
+
+  const copyMessage = (text: string) => {
+    navigator.clipboard?.writeText(text);
+    setOpenMenuId(null);
+  };
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -95,8 +115,10 @@ export default function ChatPage() {
         onClick={() => setIsAiPanelOpen(!isAiPanelOpen)}
         className="absolute top-4 right-4 z-20 w-8 h-8 rounded-full border border-slate-200 bg-white text-slate-400 hover:text-proji-primary hover:border-proji-primary/40 flex items-center justify-center transition-colors shadow-sm"
         title="Вопросы по сервису"
+        aria-label="Вопросы по сервису"
+        aria-expanded={isAiPanelOpen}
       >
-        <Info size={14} />
+        <Info size={14} aria-hidden="true" />
       </button>
 
       {/* Messages */}
@@ -156,27 +178,97 @@ export default function ChatPage() {
               key={msg.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              className={`flex group ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {msg.role === 'model' && (
                 <div className="w-7 h-7 rounded-xl bg-proji-primary/10 flex items-center justify-center mr-3 mt-1 flex-shrink-0">
                   <Sparkles size={13} className="text-proji-primary" />
                 </div>
               )}
-              <div
-                className={`max-w-[75%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
-                  msg.role === 'user'
-                    ? 'bg-proji-primary text-white rounded-tr-sm'
-                    : 'bg-white border border-proji-border text-proji-dark rounded-tl-sm'
-                }`}
-              >
-                {msg.role === 'model' ? (
-                  <div className="prose prose-sm max-w-none prose-headings:text-proji-dark prose-p:text-proji-dark prose-li:text-proji-dark prose-strong:text-proji-dark">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.text}</ReactMarkdown>
+              <div className={`max-w-[75%] flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
+                <div
+                  className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                    msg.role === 'user'
+                      ? 'bg-proji-primary text-white rounded-tr-sm'
+                      : 'bg-white border border-proji-border text-proji-dark rounded-tl-sm'
+                  }`}
+                >
+                  {msg.role === 'model' ? (
+                    <div className="prose prose-sm max-w-none prose-headings:text-proji-dark prose-p:text-proji-dark prose-li:text-proji-dark prose-strong:text-proji-dark">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.text}</ReactMarkdown>
+                    </div>
+                  ) : (
+                    <p>{msg.text}</p>
+                  )}
+                </div>
+
+                {/* Meta row: timestamp, reactions, menu */}
+                <div className={`flex items-center gap-2 mt-1 px-1 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                  <span className="text-[10px] text-proji-secondary/70 select-none">{formatTime(msg.timestamp)}</span>
+
+                  {msg.role === 'model' && (
+                    <div className="flex items-center gap-0.5">
+                      <button
+                        onClick={() => setReaction(msg.id, 'like')}
+                        title="Хороший ответ"
+                        aria-label="Хороший ответ"
+                        aria-pressed={msg.reaction === 'like'}
+                        className={`w-5 h-5 rounded-md flex items-center justify-center transition-colors ${msg.reaction === 'like' ? 'text-emerald-500 bg-emerald-50' : 'text-proji-secondary/40 hover:text-emerald-500 hover:bg-emerald-50'}`}
+                      >
+                        <ThumbsUp size={11} aria-hidden="true" />
+                      </button>
+                      <button
+                        onClick={() => setReaction(msg.id, 'dislike')}
+                        title="Плохой ответ"
+                        aria-label="Плохой ответ"
+                        aria-pressed={msg.reaction === 'dislike'}
+                        className={`w-5 h-5 rounded-md flex items-center justify-center transition-colors ${msg.reaction === 'dislike' ? 'text-red-500 bg-red-50' : 'text-proji-secondary/40 hover:text-red-500 hover:bg-red-50'}`}
+                      >
+                        <ThumbsDown size={11} aria-hidden="true" />
+                      </button>
+                    </div>
+                  )}
+
+                  <div className="relative">
+                    <button
+                      onClick={() => setOpenMenuId(openMenuId === msg.id ? null : msg.id)}
+                      className="w-5 h-5 rounded-md flex items-center justify-center text-proji-secondary/40 opacity-0 group-hover:opacity-100 hover:text-proji-dark hover:bg-slate-100 transition-all"
+                      title="Меню сообщения"
+                      aria-label="Меню сообщения"
+                      aria-haspopup="true"
+                      aria-expanded={openMenuId === msg.id}
+                    >
+                      <MoreVertical size={12} aria-hidden="true" />
+                    </button>
+
+                    <AnimatePresence>
+                      {openMenuId === msg.id && (
+                        <motion.div
+                          role="menu"
+                          initial={{ opacity: 0, scale: 0.95, y: -4 }}
+                          animate={{ opacity: 1, scale: 1, y: 0 }}
+                          exit={{ opacity: 0, scale: 0.95, y: -4 }}
+                          className={`absolute z-30 top-full mt-1 w-40 bg-white border border-proji-border rounded-xl shadow-xl py-1 ${msg.role === 'user' ? 'right-0' : 'left-0'}`}
+                        >
+                          <button
+                            role="menuitem"
+                            onClick={() => copyMessage(msg.text)}
+                            className="w-full flex items-center gap-2 px-3 py-2 text-xs text-proji-dark hover:bg-slate-50 transition-colors"
+                          >
+                            <Copy size={12} aria-hidden="true" /> Копировать
+                          </button>
+                          <button
+                            role="menuitem"
+                            onClick={() => deleteMessage(msg.id)}
+                            className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-500 hover:bg-red-50 transition-colors"
+                          >
+                            <Trash2 size={12} aria-hidden="true" /> Удалить
+                          </button>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
-                ) : (
-                  <p>{msg.text}</p>
-                )}
+                </div>
               </div>
             </motion.div>
           ))}
@@ -204,32 +296,64 @@ export default function ChatPage() {
       {/* Input bar */}
       <div className="px-4 md:px-8 py-4 border-t border-proji-border bg-proji-bg">
         <div className="max-w-3xl mx-auto">
-          <div className="flex items-end gap-3 rounded-2xl border border-proji-border bg-white px-4 py-3 focus-within:border-proji-primary/50 transition-colors shadow-sm">
-            <Sparkles size={15} className="text-proji-secondary/60 flex-shrink-0 mb-0.5" />
-            <textarea
-              ref={textareaRef}
-              value={inputText}
-              onChange={(e) => {
-                setInputText(e.target.value);
-                e.target.style.height = 'auto';
-                e.target.style.height = Math.min(e.target.scrollHeight, 160) + 'px';
-              }}
-              onKeyDown={handleKeyDown}
-              placeholder="Задайте вопрос AI консультанту..."
-              rows={1}
-              className="flex-1 min-w-0 resize-none bg-transparent text-sm text-proji-dark placeholder:text-proji-secondary focus:outline-none"
-              style={{ minHeight: 24 }}
-            />
-            <button
-              onClick={() => sendMessage()}
-              disabled={!inputText.trim() || isProcessing}
-              className="flex-shrink-0 w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-teal-400 text-white flex items-center justify-center disabled:opacity-40 transition-all hover:opacity-90"
-            >
-              {isProcessing ? <Loader2 size={15} className="animate-spin" /> : <ArrowUp size={15} />}
-            </button>
+          <div className="relative rounded-full p-[1.5px] overflow-hidden shadow-sm ai-input-glow">
+            <div className="flex items-center gap-2.5 rounded-full bg-white pl-2 pr-2.5 py-2">
+              <button
+                type="button"
+                className="flex-shrink-0 w-8 h-8 rounded-full text-proji-secondary/50 flex items-center justify-center hover:bg-slate-100 hover:text-proji-primary transition-colors"
+                title="Подсказать с ИИ"
+                aria-label="Подсказать с ИИ"
+              >
+                <Wand2 size={14} aria-hidden="true" />
+              </button>
+              <textarea
+                ref={textareaRef}
+                value={inputText}
+                onChange={(e) => {
+                  setInputText(e.target.value);
+                  e.target.style.height = 'auto';
+                  e.target.style.height = Math.min(e.target.scrollHeight, 160) + 'px';
+                }}
+                onKeyDown={handleKeyDown}
+                placeholder="Задайте вопрос (AI Ассистент)..."
+                aria-label="Сообщение для AI ассистента"
+                rows={1}
+                className="flex-1 min-w-0 resize-none bg-transparent text-sm text-proji-dark placeholder:text-proji-secondary focus:outline-none py-1"
+                style={{ minHeight: 24 }}
+              />
+              <button
+                type="button"
+                className="flex-shrink-0 w-9 h-9 rounded-full text-proji-secondary/60 flex items-center justify-center hover:bg-slate-100 transition-colors"
+                title="Голосовой ввод"
+                aria-label="Голосовой ввод"
+              >
+                <Mic size={15} aria-hidden="true" />
+              </button>
+              <button
+                onClick={() => sendMessage()}
+                disabled={!inputText.trim() || isProcessing}
+                aria-label="Отправить сообщение"
+                className="flex-shrink-0 w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-teal-400 text-white flex items-center justify-center disabled:opacity-40 transition-all hover:opacity-90"
+              >
+                {isProcessing ? <Loader2 size={15} aria-hidden="true" className="animate-spin" /> : <ArrowUp size={15} aria-hidden="true" />}
+              </button>
+            </div>
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        .ai-input-glow::before {
+          content: '';
+          position: absolute;
+          inset: -40%;
+          background: conic-gradient(from 0deg, #3b82f6, #14b8a6, #6366f1, #3b82f6);
+          animation: ai-glow-spin 4s linear infinite;
+        }
+        @keyframes ai-glow-spin {
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 }

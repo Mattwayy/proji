@@ -6,13 +6,7 @@ import { Plus, Folder, X, ChevronRight, BarChart3, Calendar } from 'lucide-react
 import { PageWrapper } from '../../src/components/PageWrapper';
 import { useAppStore } from '../../src/store/useAppStore';
 import type { Project } from '../../src/types';
-
-const STATUS_COLORS: Record<string, string> = {
-  'In Progress': 'bg-blue-100 text-blue-600',
-  'Planning': 'bg-yellow-100 text-yellow-600',
-  'Completed': 'bg-green-100 text-green-600',
-  'On Hold': 'bg-slate-100 text-slate-500',
-};
+import { STATUS_LABELS, STATUS_COLORS } from '../../src/utils/projectStatus';
 
 const SAMPLE_PROJECTS: Project[] = [
   {
@@ -138,7 +132,7 @@ export default function ProjectsPage() {
                   <p className="text-xs text-proji-secondary truncate">{project.description}</p>
                 </div>
                 <span className={`text-[10px] font-bold px-2 py-1 rounded-lg shrink-0 ${STATUS_COLORS[project.status] ?? 'bg-slate-100 text-slate-500'}`}>
-                  {project.status}
+                  {STATUS_LABELS[project.status] ?? project.status}
                 </span>
               </div>
 
