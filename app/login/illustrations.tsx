@@ -81,22 +81,31 @@ export function IllustrationQuickCreate() {
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4 mb-4">
-            <div className="h-24 bg-slate-50 border border-slate-100 rounded-2xl p-4 flex flex-col justify-between">
+            <div className="h-24 bg-slate-50 border border-slate-100 rounded-2xl p-4 flex flex-col justify-between text-left">
               <FileText size={22} className="text-violet-400" />
-              <div className="h-2.5 w-3/4 bg-slate-200 rounded-full" />
+              <div>
+                <p className="text-xs font-bold text-slate-700 leading-tight truncate">Тех. задание v2.pdf</p>
+                <p className="text-[10px] text-slate-400 mt-0.5">Документ · сейчас</p>
+              </div>
             </div>
-            <div className="h-24 bg-slate-50 border border-slate-100 rounded-2xl p-4 flex flex-col justify-between">
+            <div className="h-24 bg-slate-50 border border-slate-100 rounded-2xl p-4 flex flex-col justify-between text-left">
               <CheckSquare size={22} className="text-emerald-400" />
-              <div className="h-2.5 w-2/3 bg-slate-200 rounded-full" />
+              <div>
+                <p className="text-xs font-bold text-slate-700 leading-tight truncate">Запустить кампанию</p>
+                <p className="text-[10px] text-slate-400 mt-0.5">Задача · сегодня</p>
+              </div>
             </div>
           </div>
-          <div className="h-24 bg-slate-50 border border-slate-100 rounded-2xl p-4 flex items-center gap-4">
+          <div className="h-24 bg-slate-50 border border-slate-100 rounded-2xl p-4 flex items-center gap-4 text-left">
             <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-indigo-100 to-violet-100 flex items-center justify-center shrink-0">
               <FolderKanban size={26} className="text-indigo-500" />
             </div>
-            <div className="flex-1 space-y-2.5">
-              <div className="h-2.5 w-3/4 bg-slate-200 rounded-full" />
-              <div className="h-2.5 w-1/2 bg-slate-100 rounded-full" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-slate-700 truncate">Проект «Альфа»</p>
+              <p className="text-xs text-slate-400 mt-1">12 задач · дедлайн завтра</p>
+              <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden mt-2">
+                <div className="h-full w-[68%] bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full" />
+              </div>
             </div>
           </div>
 
@@ -123,30 +132,40 @@ export function IllustrationContextHelp() {
       </div>
 
       <div className="relative w-full">
-        <div className="relative bg-white rounded-[36px] shadow-2xl p-9 pt-11 min-h-[300px]">
-          <div className="flex items-center justify-between mb-6">
-            <span className="text-xs font-black uppercase tracking-widest text-slate-300">Аналитика страницы</span>
-            <TrendingUp size={20} className="text-emerald-400" />
-          </div>
-          <svg className="absolute left-9 top-20 w-40 h-24" viewBox="0 0 110 64" fill="none">
-            <path d="M4 56 L60 14 L104 4" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" />
-            <path d="M88 4 L104 4 L104 20" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            <circle cx="104" cy="4" r="3" fill="#6366f1" />
-          </svg>
-          <div className="flex justify-end mb-6">
-            <span className="text-2xl font-black text-indigo-500">+24%</span>
-          </div>
-          <div className="space-y-3.5">
+        <div className="relative bg-white rounded-[36px] shadow-2xl p-9 pt-8 min-h-[340px] flex flex-col gap-6">
+          {/* Header */}
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <Sparkles size={16} className="text-amber-400 shrink-0" />
-              <div className="h-3 w-36 bg-slate-100 rounded-full" />
+              <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center shrink-0">
+                <TrendingUp size={18} className="text-indigo-500" />
+              </div>
+              <span className="text-xs font-black uppercase tracking-widest text-slate-400 text-left">Аналитика страницы</span>
+            </div>
+            <div className="w-9 h-9 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
+              <span className="text-slate-400 text-xs font-black">i</span>
+            </div>
+          </div>
+
+          {/* Stat + chart */}
+          <div className="flex items-center justify-between gap-4 bg-slate-50 rounded-2xl p-5">
+            <div className="text-left">
+              <p className="text-3xl font-black text-indigo-600 leading-none">+24%</p>
+              <p className="text-xs font-bold text-slate-400 mt-2">Рост вовлечённости</p>
+            </div>
+            <svg width="140" height="68" viewBox="0 0 140 68" fill="none">
+              <path d="M4 60 L38 38 L72 46 L106 14 L136 6" stroke="#6366f1" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="136" cy="6" r="4.5" fill="#6366f1" />
+            </svg>
+          </div>
+
+          {/* Insights */}
+          <div className="space-y-3 text-left">
+            <div className="flex items-center gap-2.5">
+              <Sparkles size={15} className="text-amber-400 shrink-0" />
+              <p className="text-sm font-bold text-slate-600">3 рекомендации по улучшению</p>
             </div>
             <div className="h-3.5 w-full bg-slate-100 rounded-full" />
             <div className="h-3.5 w-3/4 bg-slate-100 rounded-full" />
-          </div>
-
-          <div className="absolute top-6 right-6 w-14 h-14 rounded-full bg-indigo-100 flex items-center justify-center">
-            <span className="text-indigo-600 text-base font-black border border-indigo-400 rounded-full w-6 h-6 flex items-center justify-center">i</span>
           </div>
         </div>
       </div>
